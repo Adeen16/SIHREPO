@@ -13,6 +13,8 @@ Passive PCAP Ingestion (ingestion/pcap_reader.py)
 Timestamped Packet Events (ingestion/packet_event.py)
       ↓
 Flow Construction (processing/flow.py)
+      ↓
+Sliding Window Engine (processing/window.py)
 ```
 
 ### Details
@@ -40,12 +42,21 @@ The flow construction layer consumes `PacketEvent` objects from the ingestion la
   - `first_seen`, `last_seen`, `duration`: Precise tracking of temporal metadata.
   - Overall `packet_count` and `byte_count`.
   - Directional counts: `fwd_packet_count`, `rev_packet_count`, `fwd_byte_count`, `rev_byte_count`.
-- **Connecting to Sliding Windows (Phase 5)**:
-  The `FlowProcessor` updates the state incrementally for every incoming packet, maintaining an active dictionary of `FlowState` objects. Phase 5 sliding windows can consume the state of these flows natively without parsing packets.
+
+## Sliding-Window Streaming Engine (Phase 5)
+
+The sliding window engine operates on incoming traffic events and maintains active time-window bounds driven strictly by packet timestamps.
+
+### Details
+- **Time-Driven Slicing**: Uses packet capture timestamps (`PacketEvent.timestamp`) rather than system wall-clock time, preserving deterministic behavior during PCAP replay.
+- **Configurable Parameters**: Supports customizable `window_seconds` (e.g. 10.0s) and `slide_seconds` (e.g. 1.0s).
+- **Buffer Eviction**: Automatically evicts packets older than `(latest_timestamp - window_seconds)`, maintaining a bounded memory footprint.
+- **Window Snapshots (`WindowSnapshot`)**: Aggregates network activity and active `FlowState` entries for any specified window interval `[window_start, window_end]`.
+- **Interface for Feature Extraction (Phase 6)**:
   ```python
-  processor = FlowProcessor()
-  for event in ingestor:
-      updated_flow = processor.process_packet(event)
-      if updated_flow:
-          window_manager.update(updated_flow)
+  manager = SlidingWindowManager(window_seconds=10.0, slide_seconds=1.0)
+  for event in pcap_ingestor:
+      completed_snapshots = manager.add_packet(event)
+      for snapshot in completed_snapshots:
+          features = feature_extractor.extract(snapshot)
   ```
