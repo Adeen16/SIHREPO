@@ -15,6 +15,8 @@ Timestamped Packet Events (ingestion/packet_event.py)
 Flow Construction (processing/flow.py)
       ↓
 Sliding Window Engine (processing/window.py)
+      ↓
+Feature Extraction (processing/features.py)
 ```
 
 ### Details
@@ -52,11 +54,22 @@ The sliding window engine operates on incoming traffic events and maintains acti
 - **Configurable Parameters**: Supports customizable `window_seconds` (e.g. 10.0s) and `slide_seconds` (e.g. 1.0s).
 - **Buffer Eviction**: Automatically evicts packets older than `(latest_timestamp - window_seconds)`, maintaining a bounded memory footprint.
 - **Window Snapshots (`WindowSnapshot`)**: Aggregates network activity and active `FlowState` entries for any specified window interval `[window_start, window_end]`.
-- **Interface for Feature Extraction (Phase 6)**:
+
+## Feature Extraction (Phase 6)
+
+The feature extraction layer (`FeatureExtractor`) consumes a `WindowSnapshot` and calculates a numerical feature vector for each active flow, preparing the data for ML inference.
+
+### Details
+- **Flow-Level Metrics**:
+  - Calculates specific throughput rates per flow: `fwd_bytes_per_sec`, `rev_bytes_per_sec`, `fwd_pkts_per_sec`, `rev_pkts_per_sec`.
+  - Computes structural indicators like `byte_ratio` (`fwd_byte_count / rev_byte_count`).
+- **Contextual Enrichment**:
+  - In addition to analyzing individual flows, the extractor performs a global pass across the `WindowSnapshot` to calculate source-IP activity levels.
+  - Adds context features directly onto each flow vector: `src_ip_flow_count`, `src_ip_unique_dst_ips`, and `src_ip_unique_dst_ports`.
+  - This design is crucial for detecting distributed attacks (DDoS) and horizontal behavior (Port Scanning) using flow-level classifiers.
+- **ML Interface**:
   ```python
-  manager = SlidingWindowManager(window_seconds=10.0, slide_seconds=1.0)
-  for event in pcap_ingestor:
-      completed_snapshots = manager.add_packet(event)
-      for snapshot in completed_snapshots:
-          features = feature_extractor.extract(snapshot)
+  features = feature_extractor.extract_features(snapshot)
+  # features is a Dict mapping flow_id to a Dict of numerical ML features.
+  # Ready for conversion into Pandas DataFrames or direct XGBoost DMatrix evaluation.
   ```
