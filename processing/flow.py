@@ -65,7 +65,10 @@ class FlowProcessor:
         Returns the updated FlowState if it was successfully matched/created.
         Returns None if the packet is unsupported or malformed.
         """
-        if not packet.src_ip or not packet.dst_ip or not packet.protocol:
+        if packet.src_ip is None or packet.dst_ip is None or packet.protocol is None:
+            return None
+            
+        if packet.src_port is None or packet.dst_port is None:
             return None
             
         if packet.protocol not in ('TCP', 'UDP'):

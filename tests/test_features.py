@@ -40,6 +40,7 @@ def test_extract_features_flow_level():
     assert vec["fwd_bytes_per_sec"] == 200.0  # 200 / 1.0
     assert vec["rev_bytes_per_sec"] == 100.0
     assert vec["byte_ratio"] == pytest.approx(2.0, 0.01) # 200 / 100
+    assert vec["is_unidirectional"] == 0.0
     
     # Assert context enrichment
     assert vec["src_ip_flow_count"] == 1.0
@@ -79,4 +80,37 @@ def test_extract_features_port_scan_context():
         assert vec["src_ip_flow_count"] == 5.0
         assert vec["src_ip_unique_dst_ips"] == 1.0
         assert vec["src_ip_unique_dst_ports"] == 5.0
-        assert vec["fwd_bytes_per_sec"] > 0 # divided by 1e-6
+        assert vec["fwd_bytes_per_sec"] == 0.0 # Duration is 0, so rate is 0.0
+        assert vec["byte_ratio"] == 10000.0 # rev_bytes is 0, capped at 10000.0
+        assert vec["is_unidirectional"] == 1.0
+
+def test_zero_duration_behavior():
+    extractor = FeatureExtractor()
+    flow1 = FlowState(
+        flow_id="10.0.0.1:100-10.0.0.2:200-TCP",
+        src_ip="10.0.0.1", dst_ip="10.0.0.2",
+        src_port=100, dst_port=200, protocol="TCP",
+        first_seen=5.0, last_seen=5.0,  # Zero duration
+        packet_count=2, byte_count=150,
+        fwd_packet_count=2, rev_packet_count=0,
+        fwd_byte_count=150, rev_byte_count=0
+    )
+    snapshot = WindowSnapshot(
+        window_start=0.0, window_end=5.0,
+        total_packets=2, total_bytes=150, flow_count=1,
+        flows={flow1.flow_id: flow1}
+    )
+    
+    features = extractor.extract_features(snapshot)
+    vec = features[flow1.flow_id]
+    
+    # Assert zero-duration logic
+    assert vec["flow_duration"] == 0.0
+    assert vec["fwd_bytes_per_sec"] == 0.0
+    assert vec["rev_bytes_per_sec"] == 0.0
+    assert vec["fwd_pkts_per_sec"] == 0.0
+    assert vec["rev_pkts_per_sec"] == 0.0
+    
+    # Assert zero reverse bytes logic
+    assert vec["byte_ratio"] == 10000.0
+    assert vec["is_unidirectional"] == 1.0

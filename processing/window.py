@@ -45,27 +45,39 @@ class SlidingWindowManager:
             
         self._buffer.append(packet)
         
-        # Advance current time tracker
-        if self.latest_timestamp is None or packet.timestamp > self.latest_timestamp:
-            self.latest_timestamp = packet.timestamp
+        # Advance current time tracker, enforcing monotonic timestamps (Option A)
+        if self.latest_timestamp is not None and packet.timestamp < self.latest_timestamp:
+            raise ValueError(f"Out-of-order packet timestamp: {packet.timestamp} < {self.latest_timestamp}")
             
-        # Evict packets older than window horizon
-        cutoff = self.latest_timestamp - self.window_seconds
-        while self._buffer and self._buffer[0].timestamp < cutoff:
-            self._buffer.popleft()
-            
-        # Check if slide intervals have elapsed and emit snapshots
+        # Check if slide intervals have elapsed and emit snapshots BEFORE evicting old packets
         emitted_snapshots: List[WindowSnapshot] = []
         if self._last_emitted_window_end is None:
             self._last_emitted_window_end = packet.timestamp
             
-        while self.latest_timestamp >= self._last_emitted_window_end + self.slide_seconds:
+        while packet.timestamp >= self._last_emitted_window_end + self.slide_seconds:
             win_end = self._last_emitted_window_end + self.slide_seconds
             win_start = win_end - self.window_seconds
             
             snapshot = self._compute_snapshot(win_start, win_end)
             emitted_snapshots.append(snapshot)
             self._last_emitted_window_end = win_end
+            
+            # Evict packets that are strictly older than the start of the next window,
+            # but preserve packets needed for the current overall window horizon.
+            next_win_start = (self._last_emitted_window_end + self.slide_seconds) - self.window_seconds
+            evict_threshold = min(next_win_start, packet.timestamp - self.window_seconds)
+            while self._buffer and self._buffer[0].timestamp < evict_threshold:
+                self._buffer.popleft()
+                
+        # Advance current time tracker
+        if self.latest_timestamp is None or packet.timestamp > self.latest_timestamp:
+            self.latest_timestamp = packet.timestamp
+            
+        # Ensure buffer doesn't retain packets older than the current window horizon 
+        # (handles cases where jump is less than slide_seconds)
+        cutoff = self.latest_timestamp - self.window_seconds
+        while self._buffer and self._buffer[0].timestamp < cutoff:
+            self._buffer.popleft()
             
         return emitted_snapshots
 

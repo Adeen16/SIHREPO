@@ -61,6 +61,11 @@ def test_bidirectional_flow():
     assert f3.first_seen == 1.0
     assert f3.last_seen == 3.0
     assert f3.duration == 2.0
+    
+    # Invariant checks
+    assert f3.packet_count == f3.fwd_packet_count + f3.rev_packet_count
+    assert f3.byte_count == f3.fwd_byte_count + f3.rev_byte_count
+    assert f3.duration == f3.last_seen - f3.first_seen
 
 def test_multiple_independent_flows():
     processor = FlowProcessor()
@@ -98,7 +103,19 @@ def test_malformed_incomplete_packets():
     assert f is None
     
     # Unsupported protocol (e.g. ICMP)
-    f = processor.process_packet(PacketEvent(timestamp=1.0, length=50, raw_packet=None, src_ip="A", dst_ip="B", src_port=None, dst_port=None, protocol="ICMP"))
+    f = processor.process_packet(PacketEvent(timestamp=1.0, length=50, raw_packet=None, src_ip="A", dst_ip="B", src_port=123, dst_port=456, protocol="ICMP"))
+    assert f is None
+    
+    # Missing src_port
+    f = processor.process_packet(PacketEvent(timestamp=1.0, length=50, raw_packet=None, src_ip="A", dst_ip="B", src_port=None, dst_port=456, protocol="TCP"))
+    assert f is None
+    
+    # Missing dst_port
+    f = processor.process_packet(PacketEvent(timestamp=1.0, length=50, raw_packet=None, src_ip="A", dst_ip="B", src_port=123, dst_port=None, protocol="TCP"))
+    assert f is None
+
+    # Missing both ports
+    f = processor.process_packet(PacketEvent(timestamp=1.0, length=50, raw_packet=None, src_ip="A", dst_ip="B", src_port=None, dst_port=None, protocol="TCP"))
     assert f is None
     
     assert len(processor.flows) == 0
