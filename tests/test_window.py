@@ -136,3 +136,27 @@ def test_large_timestamp_jump():
     # This proves we don't accidentally preserve unbounded historical packets.
     assert len(manager._buffer) == 1
     assert manager._buffer[0].timestamp == 110.0
+
+def test_out_of_order_state_integrity():
+    manager = SlidingWindowManager(window_seconds=5.0, slide_seconds=1.0)
+    
+    p1 = PacketEvent(timestamp=10.0, length=100, raw_packet=None, src_ip="A", dst_ip="B", src_port=1, dst_port=2, protocol="TCP")
+    manager.add_packet(p1)
+    
+    p_invalid = PacketEvent(timestamp=5.0, length=200, raw_packet=None, src_ip="C", dst_ip="D", src_port=3, dst_port=4, protocol="TCP")
+    
+    with pytest.raises(ValueError):
+        manager.add_packet(p_invalid)
+        
+    # Verify buffer is unmodified (still contains exactly 1 packet, p1)
+    assert len(manager._buffer) == 1
+    assert manager._buffer[0].timestamp == 10.0
+    
+    # Verify latest timestamp is unchanged
+    assert manager.latest_timestamp == 10.0
+    
+    # Verify subsequent valid packet processes correctly
+    p2 = PacketEvent(timestamp=11.0, length=300, raw_packet=None, src_ip="E", dst_ip="F", src_port=5, dst_port=6, protocol="TCP")
+    snapshots = manager.add_packet(p2)
+    assert manager.latest_timestamp == 11.0
+    assert len(manager._buffer) == 2

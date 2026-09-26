@@ -43,11 +43,11 @@ class SlidingWindowManager:
         if not packet or packet.timestamp is None:
             return []
             
-        self._buffer.append(packet)
-        
         # Advance current time tracker, enforcing monotonic timestamps (Option A)
         if self.latest_timestamp is not None and packet.timestamp < self.latest_timestamp:
             raise ValueError(f"Out-of-order packet timestamp: {packet.timestamp} < {self.latest_timestamp}")
+            
+        self._buffer.append(packet)
             
         # Check if slide intervals have elapsed and emit snapshots BEFORE evicting old packets
         emitted_snapshots: List[WindowSnapshot] = []
