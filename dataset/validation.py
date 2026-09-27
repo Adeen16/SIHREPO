@@ -15,30 +15,30 @@ def validate_dataset(records: Iterable[ExternalDatasetRecord]) -> Dict[str, Any]
         "out_of_order_records": 0,
         "time_range": {"start": None, "end": None}
     }
-    
+
     last_timestamp = -1.0
-    
+
     for record in records:
         if summary["dataset_name"] is None:
             summary["dataset_name"] = record.dataset_name
-            
+
         summary["total_records"] += 1
         summary["labels"][record.label.name] += 1
-        
+
         # Temporal checks
         if record.timestamp < 0:
             summary["invalid_timestamps"] += 1
-            
+
         if record.timestamp < last_timestamp:
             summary["out_of_order_records"] += 1
         last_timestamp = record.timestamp
-        
+
         if record.timestamp >= 0:
             if summary["time_range"]["start"] is None or record.timestamp < summary["time_range"]["start"]:
                 summary["time_range"]["start"] = record.timestamp
             if summary["time_range"]["end"] is None or record.timestamp > summary["time_range"]["end"]:
                 summary["time_range"]["end"] = record.timestamp
-            
+
         # Core feature checks (Phase 6 mapping completeness)
         core_fields = [
             record.fwd_packet_count, record.rev_packet_count,
@@ -50,5 +50,5 @@ def validate_dataset(records: Iterable[ExternalDatasetRecord]) -> Dict[str, Any]
         ]
         if any(v is None for v in core_fields):
             summary["missing_core_features"] += 1
-            
+
     return summary

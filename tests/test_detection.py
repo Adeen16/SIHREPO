@@ -72,15 +72,15 @@ def test_split_scenario_holdout():
         else:
             lbl, orig = CanonicalLabel.DDOS, "DoS attacks-SlowHTTPTest"
         records.append(_create_mock_record(float(i), label=lbl, original_label=orig))
-        
+
     tr, va, te = split_scenario_holdout(records, holdout_scenario="DoS attacks-SlowHTTPTest")
-    
+
     slow_http_in_test = [r for r in te if "SlowHTTPTest" in r.original_label]
     assert len(slow_http_in_test) == 20
-    
+
     benign_in_test = [r for r in te if r.label == CanonicalLabel.BENIGN]
     assert len(benign_in_test) == 8 # 20% of 40
-    
+
     slow_http_in_tr_va = [r for r in (tr + va) if "SlowHTTPTest" in r.original_label]
     assert len(slow_http_in_tr_va) == 0
 

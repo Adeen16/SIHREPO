@@ -7,8 +7,8 @@ from dataset.validation import validate_dataset
 
 __all__ = [
     "Phase6FeatureVector",
-    "ExternalDatasetRecord", 
-    "CanonicalLabel", 
+    "ExternalDatasetRecord",
+    "CanonicalLabel",
     "DatasetAdapter",
     "CICIDS2018Adapter",
     "CTU13Adapter",

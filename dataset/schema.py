@@ -45,29 +45,29 @@ class ExternalDatasetRecord:
     Missing/Unsupported Phase 6 mapped fields must explicitly be None.
     Dataset-specific raw features are preserved in dataset_specific_features.
     """
-    
+
     # Metadata & Temporal
     timestamp: float  # Flow event time (NOT a Phase 5 window end time)
     flow_id: str
     dataset_name: str
     scenario_id: Optional[str] = None
-    
+
     # Temporal extent of the source flow record
     # This is NOT a Phase 5 sliding window
     flow_duration: Optional[float] = None
-    
+
     # Graph-ready fields (May be missing in some datasets like anonymized CIC)
     src_ip: Optional[str] = None
     dst_ip: Optional[str] = None
     src_port: Optional[int] = None
     dst_port: Optional[int] = None
     protocol: Optional[str] = None
-    
+
     # Label
     label: CanonicalLabel = CanonicalLabel.UNKNOWN
     mitre_stage: Optional[str] = None
     original_label: Optional[str] = None
-    
+
     # Core Phase 6 Features (Mapped ONLY when semantically equivalent)
     fwd_packet_count: Optional[float] = None
     rev_packet_count: Optional[float] = None
@@ -84,6 +84,6 @@ class ExternalDatasetRecord:
     src_ip_unique_dst_ports: Optional[float] = None
     is_tcp: Optional[float] = None
     is_udp: Optional[float] = None
-    
+
     # Native dataset features preserved without forcing them into Phase 6 definitions
     dataset_specific_features: Dict[str, Any] = field(default_factory=dict)

@@ -12,7 +12,7 @@ class MockDatasetAdapter(DatasetAdapter):
     def __init__(self, name: str, mock_data: list):
         super().__init__(name, "mock_path")
         self.mock_data = mock_data
-        
+
     def map_label(self, original_label: str) -> CanonicalLabel:
         mapping = {
             "Benign": CanonicalLabel.BENIGN,
@@ -20,11 +20,11 @@ class MockDatasetAdapter(DatasetAdapter):
             "C&C": CanonicalLabel.C2_BEACONING
         }
         return mapping.get(original_label, CanonicalLabel.UNKNOWN)
-        
+
     def get_records(self) -> Iterator[ExternalDatasetRecord]:
         for data in self.mock_data:
             label = self.map_label(data.get("label", "Unknown"))
-            
+
             record = ExternalDatasetRecord(
                 timestamp=data.get("timestamp", 0.0),
                 flow_id=data.get("flow_id", "mock_flow"),
@@ -52,7 +52,7 @@ class MockDatasetAdapter(DatasetAdapter):
                 record.src_ip_unique_dst_ports = 0.0
                 record.is_tcp = 0.0
                 record.is_udp = 0.0
-                
+
             yield record
 
 def test_canonical_label_mapping():
@@ -144,15 +144,15 @@ def test_cic_adapter_real_integration():
     fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "cic_real_sample.csv")
     adapter = CICIDS2018Adapter("CIC", fixture_path)
     records = list(adapter.get_records())
-    
+
     # We wrote 3 rows, 1 has invalid timestamp, so only 2 records should be returned
     assert len(records) == 2
-    
+
     rec_benign = records[0]
     assert rec_benign.label == CanonicalLabel.BENIGN
     # Check dataset specific feature preservation (e.g. 'Flow IAT Mean')
     assert "Flow IAT Mean" in rec_benign.dataset_specific_features
-    
+
     rec_bot = records[1]
     # Check that bot was strictly mapped to UNKNOWN per our reassessment
     assert rec_bot.label == CanonicalLabel.UNKNOWN
@@ -162,21 +162,21 @@ def test_ctu_adapter_real_integration():
     fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "ctu_real_sample.csv")
     adapter = CTU13Adapter("CTU", fixture_path)
     records = list(adapter.get_records())
-    
+
     # We wrote 4 rows, all valid timestamps
     assert len(records) == 4
-    
+
     # Row 1: Background
     assert records[0].label == CanonicalLabel.BENIGN
     assert "Background" in records[0].original_label
-    
+
     # Row 2: SPAM (Generic botnet label without C2 evidence)
     assert records[1].label == CanonicalLabel.UNKNOWN
     assert "SPAM" in records[1].original_label
-    
+
     # Row 3: Explicit C2
     assert records[2].label == CanonicalLabel.C2_BEACONING
-    
+
     # Row 4: Invalid numerics
     # Should not fabricate 0.0 for duration/bytes, but rather yield None
     assert records[3].flow_duration is None

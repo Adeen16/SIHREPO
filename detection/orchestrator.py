@@ -21,14 +21,14 @@ logger = logging.getLogger(__name__)
 class DetectionOrchestrator:
     """
     Coordinates the real-time detection pipeline from raw packets to ML inference.
-    
+
     Pipeline:
     PacketEvent -> SlidingWindowManager -> FeatureExtractor -> Phase6toPhase8Bridge -> BaselineInferenceEngine
     """
     def __init__(self, model_dir: str, model_name: str = "RandomForest", window_seconds: float = 10.0, slide_seconds: float = 1.0):
         self.window_manager = SlidingWindowManager(window_seconds=window_seconds, slide_seconds=slide_seconds)
         self.feature_extractor = FeatureExtractor()
-        
+
         self.detectors = [
             DDoSDetector(model_dir=model_dir, model_name=model_name),
             C2BeaconingDetector(),
@@ -45,7 +45,7 @@ class DetectionOrchestrator:
         Returns a list of DetectionResults for any flows whose sliding window has completed.
         """
         results: List[DetectionResult] = []
-        
+
         # 1. Update sliding window and get completed snapshots
         try:
             snapshots = self.window_manager.add_packet(packet)
@@ -57,11 +57,11 @@ class DetectionOrchestrator:
         for snapshot in snapshots:
             # Phase 6: Extract canonical 16-feature representation for all flows in the window
             features_by_flow = self.feature_extractor.extract_features(snapshot)
-            
+
             for flow_id, phase6_features in features_by_flow.items():
                 result = self._run_inference_for_flow(snapshot, flow_id, phase6_features)
                 results.append(result)
-                
+
         return results
 
     def _run_inference_for_flow(self, snapshot, flow_id: str, phase6_features: Dict[str, float]) -> DetectionResult:
@@ -76,7 +76,7 @@ class DetectionOrchestrator:
                 status="error",
                 error_message="Flow state missing from snapshot"
             )
-            
+
         raw_results = []
         for detector in self.detectors:
             try:
@@ -91,5 +91,5 @@ class DetectionOrchestrator:
                     detector_name=detector.name,
                     evidence={"error": str(e)}
                 ))
-                
+
         return self.fusion.fuse(flow_id, snapshot.window_end, raw_results)

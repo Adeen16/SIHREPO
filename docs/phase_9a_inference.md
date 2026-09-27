@@ -11,7 +11,7 @@ The offline machine-learning pipeline produces three critical artifacts in the m
 The `BaselineInferenceEngine` rigorously validates that all three artifacts exist and that the input data dimensionality exactly matches the expected contract.
 
 ## 2. The Phase 6 → Phase 8 Bridge (`Phase6toPhase8Bridge`)
-The live pipeline (Phase 6) extracts a robust 16-feature behavioural representation (including source-IP contextual states). 
+The live pipeline (Phase 6) extracts a robust 16-feature behavioural representation (including source-IP contextual states).
 The `Phase6toPhase8Bridge` explicitly converts this dictionary-based 16-feature output into a strictly ordered 13-feature `numpy.ndarray` vector required by the baseline models.
 
 It guarantees that:
@@ -28,7 +28,7 @@ It guarantees that:
 ```python
 engine = BaselineInferenceEngine(model_dir="models/baseline_random", model_name="RandomForest")
 ```
-It dynamically determines feature requirements from `feature_config.json`, loads the `preprocessor.joblib`, and sets up the classifier. 
+It dynamically determines feature requirements from `feature_config.json`, loads the `preprocessor.joblib`, and sets up the classifier.
 
 Prediction is then invoked via:
 ```python

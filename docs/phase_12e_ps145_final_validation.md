@@ -28,7 +28,7 @@ This ensures that a single weak signal (e.g., Random Forest predicting DDoS on a
 
 ## D. BENIGN Results (Regression Test)
 - **Objective**: Ensure ordinary high-volume traffic (video streaming, BitTorrent) does not trigger false alerts.
-- **Fixes Applied**: 
+- **Fixes Applied**:
   - Suppressed DDoS false positives by requiring `unique_src_count > 20` or `flows_to_dst > 50` rather than just high byte volume.
   - Suppressed C2 Beaconing false positives on regular P2P traffic by enforcing a maximum average packet size (`< 500 bytes`), as true C2 beacons are small control messages.
 - **Status**: Stable. The baseline benign trace generates 0 false positives under the new hybrid rules.
@@ -57,7 +57,7 @@ This ensures that a single weak signal (e.g., Random Forest predicting DDoS on a
 - **Status**: The logic for detecting massive, uncharacteristic outbound data transfers is structurally complete within the pipeline, but no corresponding PCAP trace is available in the lab repository for empirical validation. It remains structurally valid but empirically unvalidated.
 
 ## K. Performance / Latency Metrics
-- **Packet Throughput**: The Python-based passive processing pipeline achieved roughly **~1,500 packets/second** on a single thread during validation tests. 
+- **Packet Throughput**: The Python-based passive processing pipeline achieved roughly **~1,500 packets/second** on a single thread during validation tests.
 - **Efficiency**: Welford's online variance algorithm and efficient state-purging mechanisms prevent unbounded memory growth during continuous streaming.
 
 ## L. Defensible Thresholds Rationale

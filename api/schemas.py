@@ -8,19 +8,29 @@ class PacketEventRequest(BaseModel):
     """
     timestamp: float = Field(..., description="The time the packet was observed")
     length: int = Field(..., ge=0, description="The size of the packet in bytes")
-    
+
     src_ip: Optional[str] = Field(None, description="Source IP Address")
     dst_ip: Optional[str] = Field(None, description="Destination IP Address")
-    
+
     src_port: Optional[int] = Field(None, ge=0, le=65535, description="Source Port")
     dst_port: Optional[int] = Field(None, ge=0, le=65535, description="Destination Port")
-    
+
     protocol: Optional[str] = Field(None, description="Transport Protocol (e.g., TCP, UDP)")
-    
+
     dns_query_name: Optional[str] = Field(None, description="DNS Query Domain Name")
     dns_query_type: Optional[int] = Field(None, description="DNS Query Type")
     dns_response_code: Optional[int] = Field(None, description="DNS Response Code")
-    
+
+    tls_version: Optional[int] = Field(None, description="TLS Version")
+    tls_is_client_hello: bool = Field(False, description="Is TLS ClientHello")
+    tls_sni: Optional[str] = Field(None, description="TLS Server Name Indication")
+    tls_cipher_suites_count: Optional[int] = Field(None, description="TLS Cipher Suites Count")
+    tls_extensions_count: Optional[int] = Field(None, description="TLS Extensions Count")
+
+    dns_query_name: Optional[str] = Field(None, description="DNS Query Domain Name")
+    dns_query_type: Optional[int] = Field(None, description="DNS Query Type")
+    dns_response_code: Optional[int] = Field(None, description="DNS Response Code")
+
     tls_version: Optional[int] = Field(None, description="TLS Version")
     tls_is_client_hello: bool = Field(False, description="Is TLS ClientHello")
     tls_sni: Optional[str] = Field(None, description="TLS Server Name Indication")

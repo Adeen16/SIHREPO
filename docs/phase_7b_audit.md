@@ -51,7 +51,7 @@ If we were to train an ML model directly on these CSVs, the model would either:
 1. Lack the critical context-aggregation features (`src_ip_flow_count`, etc.) entirely.
 2. Require entirely new feature extractors breaking the Phase 3-6 streaming pipeline.
 
-**Therefore, the CSV datasets cannot natively provide 100% of the Phase 6 baseline.** 
+**Therefore, the CSV datasets cannot natively provide 100% of the Phase 6 baseline.**
 To remain strictly compliant with the unidirectional streaming pipeline, we must either:
 - Exclusively train ML models using **PCAPs** processed entirely through our existing Phase 3-6 engine.
 - Drop the missing Phase 6 features in our ML architecture (which sacrifices detection efficacy for Recon/DDoS).

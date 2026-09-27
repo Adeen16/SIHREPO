@@ -21,7 +21,7 @@ Feature Extraction (processing/features.py)
 
 ### Details
 - **Supported Formats**: PCAP and PCAPNG (handled via Scapy's PcapReader).
-- **Packet Event Fields**: 
+- **Packet Event Fields**:
   - `timestamp`: Original capture time (preserved for precise flow timing).
   - `length`: Raw packet size.
   - `raw_packet`: Underlying Scapy object.
@@ -32,7 +32,7 @@ Feature Extraction (processing/features.py)
 
 ## Flow Construction (Phase 4)
 
-The flow construction layer consumes `PacketEvent` objects from the ingestion layer and groups them into stateful network flows (`FlowState`). 
+The flow construction layer consumes `PacketEvent` objects from the ingestion layer and groups them into stateful network flows (`FlowState`).
 
 ### Details
 - **Bidirectional Tracking**: TCP and UDP flows are tracked bidirectionally. Packets traveling in either direction are mapped to the same logical flow using a canonicalized key.

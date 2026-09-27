@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     Initializes the orchestrator on startup.
     """
     logger.info("Initializing Phase 10 Detection API...")
-    
+
     try:
         # We attempt to load the baseline model artifact
         state.orchestrator = DetectionOrchestrator(model_dir=MODEL_DIR, model_name="RandomForest")
@@ -31,9 +31,9 @@ async def lifespan(app: FastAPI):
         # We allow startup to complete so /status can report the failure,
         # rather than crashing the container/app immediately.
         state.orchestrator = None
-        
+
     yield
-    
+
     logger.info("Shutting down Phase 10 Detection API...")
 
 app = FastAPI(

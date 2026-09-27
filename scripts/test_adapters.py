@@ -7,7 +7,7 @@ def test_cic():
     records = adapter.get_records()
     for i in range(2):
         print(next(records))
-        
+
 def test_ctu():
     print("\nTesting CTU-13 Adapter")
     adapter = CTU13Adapter("CTU-13", r"C:\Users\ADEEN\workspace\SIH145\NTRO-Datasets\CTU-13\CTU-Malware-Capture-Botnet-42.binetflow")

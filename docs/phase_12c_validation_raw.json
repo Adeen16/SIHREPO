@@ -1,0 +1,44 @@
+{
+    "datasets": [
+        {
+            "file": "NTRO-Datasets/PCAPS/04_dns_dga_tunneling/2014-02-07_capture-win3.pcap",
+            "expected_category": "DNS_DGA_TUNNEL",
+            "start_packet": 147,
+            "packet_limit": 2000,
+            "packets": 2000,
+            "flows": 0,
+            "windows": 717,
+            "detections": [
+                {
+                    "threat_type": "DDoS",
+                    "count": 5,
+                    "evidence": {
+                        "packets_per_sec": 41.96549596921344,
+                        "bytes_per_sec": 4150.387551355209,
+                        "model": "RandomForest",
+                        "predicted_class": "DDOS"
+                    },
+                    "flow_id": "10.0.2.103:49161-69.195.129.70:80-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.66
+                },
+                {
+                    "threat_type": "DDoS",
+                    "count": 5,
+                    "evidence": {
+                        "packets_per_sec": 30.750212945236083,
+                        "bytes_per_sec": 3188.7970824209815,
+                        "model": "RandomForest",
+                        "predicted_class": "DDOS"
+                    },
+                    "flow_id": "10.0.2.103:49162-166.78.144.80:80-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.64
+                }
+            ],
+            "status": "DETECTED",
+            "elapsed_seconds": 181.32,
+            "packets_per_sec": 11.03
+        }
+    ]
+}

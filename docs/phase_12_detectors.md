@@ -4,7 +4,7 @@ This document tracks the implementation status of the 7 threat categories requir
 
 ## 1. Benign Traffic
 - **Status**: **VALIDATED**
-- **Mechanism**: The Fusion Engine returns BENIGN when all detectors report NOT_DETECTED or INSUFFICIENT_DATA. 
+- **Mechanism**: The Fusion Engine returns BENIGN when all detectors report NOT_DETECTED or INSUFFICIENT_DATA.
 - **Dataset**: `NTRO-Datasets/PCAPS/01_benign/2013-12-17_capture1.pcap`
 
 ## 2. DDoS (Volumetric / Protocol)

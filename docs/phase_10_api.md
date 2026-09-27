@@ -24,7 +24,7 @@ Returns a minimal deterministic response verifying the API process is alive.
 **Example Response:**
 ```json
 {
-  "status": "ok", 
+  "status": "ok",
   "service": "sih145-detection-api"
 }
 ```

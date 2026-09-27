@@ -3,7 +3,7 @@
 This document details the Phase 9B implementation of the `DetectionOrchestrator`, which bridges the canonical packet/flow processing pipeline to the machine learning inference baseline.
 
 ## 1. Purpose
-The `DetectionOrchestrator` serves as the unifying coordination layer. It accepts a continuous stream of `PacketEvent` objects, funnels them through the stateful time-window processing layer, extracts features at appropriate window boundaries, bridges the features to match the model contract, and invokes the ML baseline to produce structured detection results. 
+The `DetectionOrchestrator` serves as the unifying coordination layer. It accepts a continuous stream of `PacketEvent` objects, funnels them through the stateful time-window processing layer, extracts features at appropriate window boundaries, bridges the features to match the model contract, and invokes the ML baseline to produce structured detection results.
 
 ## 2. Components Reused
 The orchestrator avoids duplicating any logic by natively orchestrating existing components:
@@ -15,7 +15,7 @@ The orchestrator avoids duplicating any logic by natively orchestrating existing
 
 ## 3. Exact Processing Sequence
 1. **Packet Ingestion**: `orchestrator.process_packet(packet)` receives a `PacketEvent`.
-2. **Window Update**: The packet is fed into `SlidingWindowManager.add_packet(packet)`. 
+2. **Window Update**: The packet is fed into `SlidingWindowManager.add_packet(packet)`.
 3. **Snapshot Yield**: The window manager computes sliding-window logic. If the new packet advances the internal `latest_timestamp` sufficiently past the `slide_seconds` threshold, it evicts old packets and returns a list of completed `WindowSnapshot` objects. If no window is completed yet, it returns an empty list.
 4. **Feature Extraction**: For every completed `WindowSnapshot`, `FeatureExtractor.extract_features(snapshot)` is invoked. This produces the canonical 16-feature dictionary mapping for every flow in the snapshot.
 5. **Bridge Conversion**: Each flow's feature dictionary is passed to `Phase6toPhase8Bridge.convert(features)`, transforming it into a strict 13-feature `numpy.ndarray`.
@@ -23,8 +23,8 @@ The orchestrator avoids duplicating any logic by natively orchestrating existing
 7. **Result Generation**: The inference outputs (predicted class, confidence) are packaged into a `DetectionResult` and appended to the output list.
 
 ## 4. Inference Trigger Semantics
-Inference does **not** execute on every single packet. 
-Inference is triggered strictly at **sliding window boundaries**. 
+Inference does **not** execute on every single packet.
+Inference is triggered strictly at **sliding window boundaries**.
 When `SlidingWindowManager` yields a `WindowSnapshot`, it represents a completed observation block. Only at this moment does feature extraction and inference occur for the flows within that window.
 
 ## 5. Error Handling
@@ -34,7 +34,7 @@ When `SlidingWindowManager` yields a `WindowSnapshot`, it represents a completed
 - **Unsupported Protocol**: `FlowProcessor` preserves its native behavior (e.g., extracting IP but omitting port-level tracking for non-TCP/UDP traffic, which may subsequently fail feature validation if required fields are missing).
 
 ## 6. Data Flow
-`PacketEvent` → `SlidingWindowManager` → `[WindowSnapshot, ...]` 
+`PacketEvent` → `SlidingWindowManager` → `[WindowSnapshot, ...]`
 For each `WindowSnapshot`:
 → `FeatureExtractor` → `Dict[str, Dict[str, float]]`
 For each Flow Dict:

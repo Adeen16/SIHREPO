@@ -5,7 +5,7 @@ This document outlines the first reproducible machine-learning baseline for netw
 ## 1. Chosen Dataset and Features
 
 **Dataset Selected:** CSE-CIC-IDS2018 (Auxiliary CSV)
-**Reasoning:** The objective was to build a reproducible baseline without fabricating missing features. We utilized the subset of the Phase 6 feature vector that is legitimately available and fully overlapping in the CIC-IDS2018 dataset. 
+**Reasoning:** The objective was to build a reproducible baseline without fabricating missing features. We utilized the subset of the Phase 6 feature vector that is legitimately available and fully overlapping in the CIC-IDS2018 dataset.
 
 **Final Feature List (Input Dimension = 13):**
 1. `flow_duration` (Numeric)

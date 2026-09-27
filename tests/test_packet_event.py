@@ -12,7 +12,7 @@ def test_packet_event_initialization():
         dst_port=80,
         protocol="TCP"
     )
-    
+
     assert event.timestamp == 1000.0
     assert event.length == 64
     assert event.src_ip == "192.168.1.1"
@@ -27,7 +27,7 @@ def test_packet_event_optional_fields():
         length=128,
         raw_packet=None
     )
-    
+
     assert event.timestamp == 2000.0
     assert event.length == 128
     assert event.src_ip is None

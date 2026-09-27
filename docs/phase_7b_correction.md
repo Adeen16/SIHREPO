@@ -52,8 +52,8 @@ CTU-13 labels are highly granular. A generic "botnet" label is no longer blindly
 **Do not attempt to train a model strictly expecting a complete Phase 6 Feature Vector using CIC-IDS2018 or CTU-13 CSV datasets.**
 
 The current evidence structurally confirms:
-1. **Canonical Path**: The only way to receive the complete 16-feature behavioural profile is by ingesting PCAPs through the Phase 3-6 streaming pipeline natively. 
-2. **Auxiliary Role**: CIC/CTU CSV datasets are auxiliary labelled sources. They contain vastly different structures (missing context aggregations in CIC; missing directional packet tracking in CTU). 
+1. **Canonical Path**: The only way to receive the complete 16-feature behavioural profile is by ingesting PCAPs through the Phase 3-6 streaming pipeline natively.
+2. **Auxiliary Role**: CIC/CTU CSV datasets are auxiliary labelled sources. They contain vastly different structures (missing context aggregations in CIC; missing directional packet tracking in CTU).
 3. **Model Selection**: If ML models are to be trained, either:
    - They must be trained explicitly on the reduced subset of features that are uniformly available across all sources.
    - Alternatively, ML models should uniquely rely on dataset-specific feature permutations without demanding structural equivalence to Phase 6.

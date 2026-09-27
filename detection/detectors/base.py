@@ -19,7 +19,7 @@ class DetectionResult:
 
 class BaseDetector:
     """Base class for all threat detectors."""
-    
+
     @property
     def name(self) -> str:
         return self.__class__.__name__

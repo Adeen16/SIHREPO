@@ -36,7 +36,7 @@ When the command is run, the pipeline operates as follows for each stream:
 
 ## 4. Expected Demonstration Output
 
-The console will output the sequential processing of up to 50,000 packets per dataset. 
+The console will output the sequential processing of up to 50,000 packets per dataset.
 
 ### Category 1: BENIGN
 - **Expected Result**: 0 alerts.

@@ -37,14 +37,14 @@ class FeaturePreprocessor:
         X_list = []
         y_list = []
         ids_list = []
-        
+
         for rec in records:
             vec = self.extract_features(rec)
             if vec is not None and rec.label.value >= 0: # Reject CanonicalLabel.UNKNOWN (-1) from training natively
                 X_list.append(vec)
                 y_list.append(rec.label.value)
                 ids_list.append(rec.flow_id)
-                
+
         return np.array(X_list), np.array(y_list), np.array(ids_list)
 
     def fit(self, X: np.ndarray):
@@ -57,11 +57,11 @@ class FeaturePreprocessor:
         if not self.is_fitted:
             raise RuntimeError("Preprocessor must be fitted before transform.")
         return self.scaler.transform(X)
-        
+
     def save(self, filepath: str):
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         joblib.dump(self.scaler, filepath)
-        
+
     def load(self, filepath: str):
         self.scaler = joblib.load(filepath)
         self.is_fitted = True

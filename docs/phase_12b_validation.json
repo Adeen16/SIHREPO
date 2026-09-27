@@ -1,0 +1,85 @@
+{
+  "datasets": [
+    {
+      "file": "NTRO-Datasets/PCAPS/01_benign/2013-12-17_capture1.pcap",
+      "expected_category": "BENIGN",
+      "packets": 5000,
+      "flows": "not_recorded",
+      "windows": "not_recorded",
+      "detections": [],
+      "status": "BENIGN",
+      "elapsed_seconds": 2.64
+    },
+    {
+      "file": "NTRO-Datasets/PCAPS/02_ddos/2015-09-10_winlinux.pcap",
+      "expected_category": "DDoS",
+      "packets": 5000,
+      "flows": "not_recorded",
+      "windows": "not_recorded",
+      "detections": [],
+      "status": "BENIGN_IN_SAMPLE",
+      "elapsed_seconds": 1.85
+    },
+    {
+      "file": "NTRO-Datasets/PCAPS/03_c2_beaconing/botnet-capture-20110810-neris.pcap",
+      "expected_category": "C2_BEACONING",
+      "packets": 5000,
+      "flows": "not_recorded",
+      "windows": "not_recorded",
+      "detections": [],
+      "status": "BENIGN_IN_SAMPLE",
+      "elapsed_seconds": 60.0
+    },
+    {
+      "file": "NTRO-Datasets/PCAPS/04_dns_dga_tunneling/2014-02-07_capture-win3.pcap",
+      "expected_category": "DNS_DGA_TUNNEL",
+      "packets": 5000,
+      "flows": "not_recorded",
+      "windows": "not_recorded",
+      "detections": [],
+      "status": "BENIGN_IN_SAMPLE",
+      "elapsed_seconds": 25.0
+    },
+    {
+      "file": "NTRO-Datasets/PCAPS/05_encrypted_malware/2017-06-24_win2.pcap",
+      "expected_category": "ENCRYPTED_MALWARE",
+      "packets": 5000,
+      "flows": "not_recorded",
+      "windows": "not_recorded",
+      "detections": [],
+      "status": "BENIGN_IN_SAMPLE",
+      "elapsed_seconds": 15.0
+    },
+    {
+      "file": "NTRO-Datasets/PCAPS/06_reconnaissance/botnet-capture-20110812-rbot.pcap",
+      "expected_category": "RECON_PORT_SCAN",
+      "packets": 5000,
+      "flows": "not_recorded",
+      "windows": "not_recorded",
+      "detections": [
+        {
+          "threat_type": "RECONNAISSANCE",
+          "count": 2521,
+          "severity": "HIGH",
+          "evidence": {
+            "unique_destination_ports": 1.0,
+            "unique_destination_ips": 30.0,
+            "reason": "high destination-ip fan-out"
+          }
+        }
+      ],
+      "status": "DETECTED",
+      "elapsed_seconds": 35.0
+    },
+    {
+      "file": "N/A",
+      "expected_category": "DATA_EXFILTRATION",
+      "packets": 0,
+      "flows": 0,
+      "windows": 0,
+      "detections": [],
+      "status": "UNVALIDATED",
+      "elapsed_seconds": 0.0
+    }
+  ]
+}

@@ -25,40 +25,40 @@ def main():
     print("========================================")
     print("Environment Validation Report")
     print("========================================")
-    
+
     # 1. Python version
     print(f"[INFO] Python Version: {sys.version.split()[0]}")
-    
+
     # 2. Required Python imports
     print("\n--- Checking Python Dependencies ---")
     dependencies = [
-        ("numpy", "numpy"), 
-        ("pandas", "pandas"), 
-        ("scapy", "scapy"), 
-        ("pyshark", "pyshark"), 
-        ("sklearn", "scikit-learn"), 
-        ("xgboost", "xgboost"), 
-        ("joblib", "joblib"), 
-        ("fastapi", "fastapi"), 
-        ("uvicorn", "uvicorn"), 
-        ("websockets", "websockets"), 
-        ("pydantic", "pydantic"), 
-        ("dotenv", "python-dotenv"), 
-        ("pytest", "pytest"), 
+        ("numpy", "numpy"),
+        ("pandas", "pandas"),
+        ("scapy", "scapy"),
+        ("pyshark", "pyshark"),
+        ("sklearn", "scikit-learn"),
+        ("xgboost", "xgboost"),
+        ("joblib", "joblib"),
+        ("fastapi", "fastapi"),
+        ("uvicorn", "uvicorn"),
+        ("websockets", "websockets"),
+        ("pydantic", "pydantic"),
+        ("dotenv", "python-dotenv"),
+        ("pytest", "pytest"),
         ("requests", "requests")
     ]
     for mod_name, pip_name in dependencies:
         check_import(mod_name, pip_name)
-        
+
     # 3. Node & NPM
     print("\n--- Checking Node.js & NPM ---")
     check_command("node --version", "Node.js")
     check_command("npm --version", "npm")
-    
+
     # 4. Git
     print("\n--- Checking Git ---")
     check_command("git --version", "Git")
-    
+
     # 5. Wireshark & Npcap
     print("\n--- Checking Network Tools ---")
     wireshark_path = r"C:\Program Files\Wireshark\Wireshark.exe"
@@ -66,7 +66,7 @@ def main():
         print("[OK] Wireshark is available.")
     else:
         print("[FAIL] Wireshark is NOT available.")
-        
+
     npcap_path1 = os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "System32", "Npcap")
     npcap_path2 = r"C:\Program Files\Npcap"
     if os.path.exists(npcap_path1) or os.path.exists(npcap_path2):
