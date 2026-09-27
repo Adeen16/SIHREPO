@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
+from dataclasses import dataclass, field
+from typing import Dict, Optional, Tuple, Any
 from ingestion.packet_event import PacketEvent
 
 @dataclass
@@ -30,6 +30,15 @@ class FlowState:
     rev_packet_count: int = 0
     fwd_byte_count: int = 0
     rev_byte_count: int = 0
+    
+    # Timing stats for C2 Beaconing (Welford's online algorithm for inter-arrival time)
+    _last_packet_time: float = 0.0
+    _iat_count: int = 0
+    _iat_mean: float = 0.0
+    _iat_m2: float = 0.0
+    
+    # Custom metadata collected across packets
+    metadata: Dict[str, Any] = field(default_factory=dict)
     
     @property
     def duration(self) -> float:
@@ -94,7 +103,8 @@ class FlowProcessor:
                 fwd_packet_count=1,
                 fwd_byte_count=packet.length,
                 rev_packet_count=0,
-                rev_byte_count=0
+                rev_byte_count=0,
+                _last_packet_time=packet.timestamp
             )
             return self.flows[key]
             
@@ -103,6 +113,17 @@ class FlowProcessor:
         # Update overall stats
         flow.packet_count += 1
         flow.byte_count += packet.length
+        
+        # Inter-arrival time streaming variance (Welford's)
+        if flow._last_packet_time > 0 and packet.timestamp >= flow._last_packet_time:
+            iat = packet.timestamp - flow._last_packet_time
+            flow._iat_count += 1
+            delta = iat - flow._iat_mean
+            flow._iat_mean += delta / flow._iat_count
+            delta2 = iat - flow._iat_mean
+            flow._iat_m2 += delta * delta2
+            
+        flow._last_packet_time = packet.timestamp
         
         # Update timestamps
         if packet.timestamp < flow.first_seen:
@@ -118,5 +139,25 @@ class FlowProcessor:
         else:
             flow.rev_packet_count += 1
             flow.rev_byte_count += packet.length
+            
+        # Collect metadata
+        if packet.dns_query_name:
+            if "dns_queries" not in flow.metadata:
+                flow.metadata["dns_queries"] = []
+            flow.metadata["dns_queries"].append({
+                "name": packet.dns_query_name,
+                "type": packet.dns_query_type
+            })
+            
+        if packet.tls_is_client_hello:
+            flow.metadata["tls_client_hello"] = True
+            if packet.tls_sni:
+                flow.metadata["tls_sni"] = packet.tls_sni
+            if packet.tls_version:
+                flow.metadata["tls_version"] = packet.tls_version
+            if packet.tls_cipher_suites_count:
+                flow.metadata["tls_cipher_suites_count"] = packet.tls_cipher_suites_count
+            if packet.tls_extensions_count:
+                flow.metadata["tls_extensions_count"] = packet.tls_extensions_count
             
         return flow

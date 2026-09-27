@@ -53,6 +53,8 @@ class SlidingWindowManager:
         emitted_snapshots: List[WindowSnapshot] = []
         if self._last_emitted_window_end is None:
             self._last_emitted_window_end = packet.timestamp
+        elif packet.timestamp > self._last_emitted_window_end + self.window_seconds * 2:
+            self._last_emitted_window_end = packet.timestamp - self.window_seconds
             
         while packet.timestamp >= self._last_emitted_window_end + self.slide_seconds:
             win_end = self._last_emitted_window_end + self.slide_seconds

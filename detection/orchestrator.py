@@ -5,20 +5,18 @@ from typing import List, Optional, Dict
 from ingestion.packet_event import PacketEvent
 from processing.window import SlidingWindowManager
 from processing.features import FeatureExtractor
-from detection.bridge import Phase6toPhase8Bridge
-from detection.inference import BaselineInferenceEngine
+from detection.detectors.base import DetectionResult
+from detection.detectors.fusion import FusionEngine
+from detection.detectors.ddos import DDoSDetector
+from detection.detectors.c2_beacon import C2BeaconingDetector
+from detection.detectors.dns_tunnel import DNSTunnelDetector
+from detection.detectors.encrypted_malware import EncryptedMalwareDetector
+from detection.detectors.reconnaissance import ReconnaissanceDetector
+from detection.detectors.exfiltration import ExfiltrationDetector
 
 logger = logging.getLogger(__name__)
 
-@dataclass
-class DetectionResult:
-    flow_id: str
-    timestamp: float  # The end time of the window snapshot
-    status: str       # "success" or "error"
-    predicted_class: Optional[str] = None
-    confidence: Optional[float] = None
-    model_name: Optional[str] = None
-    error_message: Optional[str] = None
+
 
 class DetectionOrchestrator:
     """
@@ -30,8 +28,16 @@ class DetectionOrchestrator:
     def __init__(self, model_dir: str, model_name: str = "RandomForest", window_seconds: float = 10.0, slide_seconds: float = 1.0):
         self.window_manager = SlidingWindowManager(window_seconds=window_seconds, slide_seconds=slide_seconds)
         self.feature_extractor = FeatureExtractor()
-        self.bridge = Phase6toPhase8Bridge()
-        self.inference_engine = BaselineInferenceEngine(model_dir=model_dir, model_name=model_name)
+        
+        self.detectors = [
+            DDoSDetector(model_dir=model_dir, model_name=model_name),
+            C2BeaconingDetector(),
+            DNSTunnelDetector(),
+            EncryptedMalwareDetector(),
+            ReconnaissanceDetector(),
+            ExfiltrationDetector()
+        ]
+        self.fusion = FusionEngine()
 
     def process_packet(self, packet: PacketEvent) -> List[DetectionResult]:
         """
@@ -53,36 +59,37 @@ class DetectionOrchestrator:
             features_by_flow = self.feature_extractor.extract_features(snapshot)
             
             for flow_id, phase6_features in features_by_flow.items():
-                result = self._run_inference_for_flow(flow_id, snapshot.window_end, phase6_features)
+                result = self._run_inference_for_flow(snapshot, flow_id, phase6_features)
                 results.append(result)
                 
         return results
 
-    def _run_inference_for_flow(self, flow_id: str, timestamp: float, phase6_features: Dict[str, float]) -> DetectionResult:
+    def _run_inference_for_flow(self, snapshot, flow_id: str, phase6_features: Dict[str, float]) -> DetectionResult:
         """
-        Converts features through the bridge and executes the baseline model.
+        Executes all PS 145 detectors and fuses the result.
         """
-        try:
-            # Phase 6 -> Phase 8 Bridge (validates and converts to 13-feature array)
-            vector = self.bridge.convert(phase6_features)
-            
-            # Phase 8 Baseline Inference
-            inference_output = self.inference_engine.predict(vector)
-            
+        flow_state = snapshot.flows.get(flow_id)
+        if not flow_state:
             return DetectionResult(
                 flow_id=flow_id,
-                timestamp=timestamp,
-                status="success",
-                predicted_class=inference_output.get("predicted_class"),
-                confidence=inference_output.get("confidence"),
-                model_name=inference_output.get("model_name")
-            )
-            
-        except Exception as e:
-            # Missing feature, None value, or other failure
-            return DetectionResult(
-                flow_id=flow_id,
-                timestamp=timestamp,
+                timestamp=snapshot.window_end,
                 status="error",
-                error_message=str(e)
+                error_message="Flow state missing from snapshot"
             )
+            
+        raw_results = []
+        for detector in self.detectors:
+            try:
+                res = detector.evaluate(snapshot, flow_state, phase6_features)
+                raw_results.append(res)
+            except Exception as e:
+                logger.error(f"Detector {detector.name} failed: {e}")
+                raw_results.append(DetectionResult(
+                    flow_id=flow_id,
+                    timestamp=snapshot.window_end,
+                    status="error",
+                    detector_name=detector.name,
+                    evidence={"error": str(e)}
+                ))
+                
+        return self.fusion.fuse(flow_id, snapshot.window_end, raw_results)

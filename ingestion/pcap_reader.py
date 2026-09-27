@@ -49,10 +49,43 @@ class PCAPIngestor:
             event.src_port = pkt[TCP].sport
             event.dst_port = pkt[TCP].dport
             event.protocol = "TCP"
+            
+            # Passive TLS Extraction
+            if pkt.haslayer("TLSClientHello"):
+                ch = pkt["TLSClientHello"]
+                event.tls_is_client_hello = True
+                event.tls_version = getattr(ch, "version", None)
+                if hasattr(ch, "ciphers"):
+                    event.tls_cipher_suites_count = len(ch.ciphers)
+                if hasattr(ch, "ext"):
+                    event.tls_extensions_count = len(ch.ext)
+                    
+                    # Try to extract SNI safely
+                    for ext in ch.ext:
+                        if ext.name == "ServerName":
+                            if hasattr(ext, "servernames") and len(ext.servernames) > 0:
+                                try:
+                                    event.tls_sni = ext.servernames[0].servername.decode('utf-8', errors='ignore')
+                                except:
+                                    pass
+                            
         elif UDP in pkt:
             event.src_port = pkt[UDP].sport
             event.dst_port = pkt[UDP].dport
             event.protocol = "UDP"
+            
+            # Passive DNS Extraction
+            if pkt.haslayer("DNS"):
+                dns = pkt["DNS"]
+                event.dns_response_code = getattr(dns, "rcode", None)
+                
+                # Check for query question
+                if hasattr(dns, "qd") and dns.qd is not None:
+                    try:
+                        event.dns_query_name = dns.qd.qname.decode('utf-8', errors='ignore')
+                    except:
+                        pass
+                    event.dns_query_type = getattr(dns.qd, "qtype", None)
             
         return event
 

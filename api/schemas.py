@@ -16,6 +16,16 @@ class PacketEventRequest(BaseModel):
     dst_port: Optional[int] = Field(None, ge=0, le=65535, description="Destination Port")
     
     protocol: Optional[str] = Field(None, description="Transport Protocol (e.g., TCP, UDP)")
+    
+    dns_query_name: Optional[str] = Field(None, description="DNS Query Domain Name")
+    dns_query_type: Optional[int] = Field(None, description="DNS Query Type")
+    dns_response_code: Optional[int] = Field(None, description="DNS Response Code")
+    
+    tls_version: Optional[int] = Field(None, description="TLS Version")
+    tls_is_client_hello: bool = Field(False, description="Is TLS ClientHello")
+    tls_sni: Optional[str] = Field(None, description="TLS Server Name Indication")
+    tls_cipher_suites_count: Optional[int] = Field(None, description="TLS Cipher Suites Count")
+    tls_extensions_count: Optional[int] = Field(None, description="TLS Extensions Count")
 
 class DetectionResponseItem(BaseModel):
     """
@@ -23,10 +33,13 @@ class DetectionResponseItem(BaseModel):
     """
     flow_id: str
     timestamp: float
-    status: str
-    predicted_class: Optional[str] = None
+    status: str  # e.g., DETECTED, NOT_DETECTED, INSUFFICIENT_DATA, UNVALIDATED
+    threat_type: Optional[str] = None
+    severity: Optional[str] = None  # LOW, MEDIUM, HIGH, CRITICAL
     confidence: Optional[float] = None
-    model_name: Optional[str] = None
+    score: Optional[float] = None
+    detector_name: Optional[str] = None
+    evidence: Optional[dict] = None
     error_message: Optional[str] = None
 
 class DetectionResponse(BaseModel):

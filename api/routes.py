@@ -28,8 +28,11 @@ def get_model_info():
     """
     if not state.orchestrator:
         raise HTTPException(status_code=503, detail="Model orchestrator not initialized")
+    ddos_detector = next((d for d in state.orchestrator.detectors if hasattr(d, 'inference_engine')), None)
+    if not ddos_detector:
+        raise HTTPException(status_code=503, detail="DDoS detector with model not initialized")
         
-    engine = state.orchestrator.inference_engine
+    engine = ddos_detector.inference_engine
     return ModelInfoResponse(
         model_name=engine.model_name,
         features_expected=len(engine.feature_config["features"]),
@@ -69,6 +72,14 @@ def detect(request: PacketEventRequest):
             src_port=request.src_port,
             dst_port=request.dst_port,
             protocol=request.protocol,
+            dns_query_name=request.dns_query_name,
+            dns_query_type=request.dns_query_type,
+            dns_response_code=request.dns_response_code,
+            tls_version=request.tls_version,
+            tls_is_client_hello=request.tls_is_client_hello,
+            tls_sni=request.tls_sni,
+            tls_cipher_suites_count=request.tls_cipher_suites_count,
+            tls_extensions_count=request.tls_extensions_count,
             raw_packet=None
         )
         
@@ -83,7 +94,7 @@ def detect(request: PacketEventRequest):
             state.windows_completed += 1
             
             for res in results:
-                if res.status == "success":
+                if res.status != "error":
                     state.detections_generated += 1
                 else:
                     state.processing_errors += 1
@@ -93,9 +104,12 @@ def detect(request: PacketEventRequest):
                         flow_id=res.flow_id,
                         timestamp=res.timestamp,
                         status=res.status,
-                        predicted_class=res.predicted_class,
+                        threat_type=res.threat_type,
+                        severity=res.severity,
                         confidence=res.confidence,
-                        model_name=res.model_name,
+                        score=res.score,
+                        detector_name=res.detector_name,
+                        evidence=res.evidence,
                         error_message=res.error_message
                     )
                 )
@@ -115,3 +129,64 @@ def detect(request: PacketEventRequest):
         state.processing_errors += 1
         logger.error(f"Internal processing failure: {e}")
         raise HTTPException(status_code=500, detail=f"Internal processing failure: {e}")
+
+from pydantic import BaseModel
+import os
+from ingestion.pcap_reader import PCAPIngestor
+
+class DemoPcapRequest(BaseModel):
+    pcap_path: str
+
+@router.post("/demo/pcap", response_model=DetectionResponse)
+def demo_pcap(request: DemoPcapRequest):
+    """
+    Safely runs a local PCAP file through the pipeline for demonstration.
+    """
+    if not state.orchestrator:
+        raise HTTPException(status_code=503, detail="Model orchestrator not initialized")
+        
+    safe_dir = os.path.abspath(os.path.join(os.getcwd(), "NTRO-Datasets", "PCAPS"))
+    safe_dir2 = os.path.abspath(os.path.join(os.getcwd(), "PS145-Test-PCAPs"))
+    
+    req_path = os.path.abspath(request.pcap_path)
+    
+    if not (req_path.startswith(safe_dir) or req_path.startswith(safe_dir2)) or not os.path.exists(req_path):
+        raise HTTPException(status_code=400, detail="Invalid or unsafe PCAP path. Must be within NTRO-Datasets/PCAPS or PS145-Test-PCAPs.")
+        
+    try:
+        ingestor = PCAPIngestor(req_path)
+        all_results = []
+        for packet in ingestor:
+            state.packets_processed += 1
+            results = state.orchestrator.process_packet(packet)
+            if results:
+                state.windows_completed += 1
+                for res in results:
+                    if res.status != "error":
+                        state.detections_generated += 1
+                    else:
+                        state.processing_errors += 1
+                    
+                    all_results.append(
+                        DetectionResponseItem(
+                            flow_id=res.flow_id,
+                            timestamp=res.timestamp,
+                            status=res.status,
+                            threat_type=res.threat_type,
+                            severity=res.severity,
+                            confidence=res.confidence,
+                            score=res.score,
+                            detector_name=res.detector_name,
+                            evidence=res.evidence,
+                            error_message=res.error_message
+                        )
+                    )
+        
+        return DetectionResponse(
+            message=f"Demo PCAP processed. {len(all_results)} detections generated.",
+            detections=all_results
+        )
+    except Exception as e:
+        logger.error(f"Demo processing failure: {e}")
+        raise HTTPException(status_code=500, detail=f"Demo processing failure: {e}")
+
