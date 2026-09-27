@@ -39,6 +39,7 @@ class DetectionResponseItem(BaseModel):
     confidence: Optional[float] = None
     score: Optional[float] = None
     detector_name: Optional[str] = None
+    validation_source: str = "REAL_PCAP"
     evidence: Optional[dict] = None
     error_message: Optional[str] = None
 

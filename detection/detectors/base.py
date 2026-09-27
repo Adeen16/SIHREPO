@@ -13,6 +13,7 @@ class DetectionResult:
     confidence: Optional[float] = None
     score: Optional[float] = None
     detector_name: Optional[str] = None
+    validation_source: str = "REAL_PCAP"
     evidence: Optional[Dict[str, Any]] = None
     error_message: Optional[str] = None
 
