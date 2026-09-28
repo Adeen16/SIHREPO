@@ -1,0 +1,31 @@
+{
+  "class_": "DDOS",
+  "model": "RandomForestClassifier",
+  "model_path": "models\\rf_ddos.joblib",
+  "datasets": [
+    {
+      "file": "NTRO-Datasets\\CSE-CIC-IDS2018\\Friday-16-02-2018_TrafficForML_CICFlowMeter.csv",
+      "role": "dos_train_val_80/20"
+    },
+    {
+      "file": "NTRO-Datasets\\CSE-CIC-IDS2018\\Friday-02-03-2018_TrafficForML_CICFlowMeter.csv",
+      "role": "benign_train"
+    },
+    {
+      "file": "NTRO-Datasets\\CSE-CIC-IDS2018\\Wednesday-28-02-2018_TrafficForML_CICFlowMeter.csv",
+      "role": "benign_val"
+    }
+  ],
+  "split_strategy": "80/20 row-order within Friday-16-02 DoS file + separate benign files",
+  "precision": 0.7948,
+  "recall": 0.9929,
+  "f1": 0.8829,
+  "fpr": 0.0526,
+  "train_samples": 1601243,
+  "val_samples": 753915,
+  "train_positive": 473478,
+  "val_positive": 128324,
+  "train_time_s": 38.506,
+  "inference_time_ms": 672.253,
+  "note": "All metrics from sklearn on held-out validation. No fabrication."
+}

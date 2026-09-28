@@ -1,0 +1,9 @@
+{
+  "pcap": "datasets/synthetic/benign_bulk_dl.pcap",
+  "total_packets": 104,
+  "total_results": 2,
+  "total_alerts": 0,
+  "schema_valid": true,
+  "elapsed_s": 0.062,
+  "alerts": []
+}

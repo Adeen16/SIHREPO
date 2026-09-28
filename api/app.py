@@ -23,13 +23,15 @@ async def lifespan(app: FastAPI):
     logger.info("Initializing Phase 10 Detection API...")
 
     try:
-        # We attempt to load the baseline model artifact
-        state.orchestrator = DetectionOrchestrator(model_dir=MODEL_DIR, model_name="RandomForest")
-        logger.info(f"Orchestrator initialized with model from {MODEL_DIR}")
+        effective_model_dir = MODEL_DIR if os.path.isdir(MODEL_DIR) else None
+        state.orchestrator = DetectionOrchestrator(
+            model_dir=effective_model_dir, model_name="RandomForest")
+        if effective_model_dir:
+            logger.info(f"Orchestrator initialized with model from {MODEL_DIR}")
+        else:
+            logger.warning(f"Orchestrator running behavioral-only (no model at {MODEL_DIR})")
     except Exception as e:
         logger.error(f"Failed to initialize orchestrator: {e}")
-        # We allow startup to complete so /status can report the failure,
-        # rather than crashing the container/app immediately.
         state.orchestrator = None
 
     yield

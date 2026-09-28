@@ -25,7 +25,7 @@ class DetectionOrchestrator:
     Pipeline:
     PacketEvent -> SlidingWindowManager -> FeatureExtractor -> Phase6toPhase8Bridge -> BaselineInferenceEngine
     """
-    def __init__(self, model_dir: str, model_name: str = "RandomForest", window_seconds: float = 10.0, slide_seconds: float = 1.0):
+    def __init__(self, model_dir: str = None, model_name: str = "RandomForest", window_seconds: float = 10.0, slide_seconds: float = 1.0):
         self.window_manager = SlidingWindowManager(window_seconds=window_seconds, slide_seconds=slide_seconds)
         self.feature_extractor = FeatureExtractor()
 

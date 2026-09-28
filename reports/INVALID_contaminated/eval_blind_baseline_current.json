@@ -1,0 +1,101 @@
+{
+  "f4c4c59d460c6748110e6a0288c84a1362d7a3fa8a34b7a5cbe423de9e903deb": {
+    "verdict": "BENIGN",
+    "expected_class": "BENIGN",
+    "wall_time": 2.468079090118408,
+    "packets": 15000,
+    "packets_per_sec": 6077.601021805327,
+    "peak_rss": 203665408,
+    "clean": true
+  },
+  "b142bd39de652584521c1e5c0fa6d35630b69b27692e187b2b2aa14426bc699e": {
+    "verdict": "BENIGN",
+    "expected_class": "BENIGN",
+    "wall_time": 1.07590913772583,
+    "packets": 6000,
+    "packets_per_sec": 5576.679098276194,
+    "peak_rss": 238592000,
+    "clean": true
+  },
+  "bccef78f0aaf26c3288094511b84b87717afa148bcff9203565d6049c8f3537e": {
+    "verdict": "BENIGN",
+    "expected_class": "BENIGN",
+    "wall_time": 60.00063467025757,
+    "packets": 281093,
+    "packets_per_sec": 4684.833777922325,
+    "peak_rss": 1884323840,
+    "clean": true
+  },
+  "6b10fa77c165de6d621842f9becb158d9630b0c913ddf6df2f943a839b142d17": {
+    "verdict": "BENIGN",
+    "expected_class": "BENIGN",
+    "wall_time": 6.3263115882873535,
+    "packets": 25000,
+    "packets_per_sec": 3951.749712468391,
+    "peak_rss": 1821097984,
+    "clean": true
+  },
+  "fa5eda45d90a9c5835d9193d2708cac2a7380722be464bf961efe7b32f861b99": {
+    "verdict": "BENIGN",
+    "expected_class": "BENIGN",
+    "wall_time": 40.27195453643799,
+    "packets": 200000,
+    "packets_per_sec": 4966.235244903259,
+    "peak_rss": 1344241664,
+    "clean": true
+  },
+  "4b6e69fe3c43e5277576491097429cb84b742764c9a1bdf463f0ef6c3377300d": {
+    "verdict": "BENIGN",
+    "expected_class": "BENIGN",
+    "wall_time": 3.6437549591064453,
+    "packets": 15000,
+    "packets_per_sec": 4116.632476207576,
+    "peak_rss": 1388695552,
+    "clean": true
+  },
+  "30890a6c74f748d224b5fd1504bebc4e4103e5848d2fcb2acd4dc08ca3c2f761": {
+    "verdict": "BENIGN",
+    "expected_class": "BENIGN",
+    "wall_time": 2.9279515743255615,
+    "packets": 12000,
+    "packets_per_sec": 4098.428438921206,
+    "peak_rss": 801632256,
+    "clean": true
+  },
+  "64eede78604b245f9ef842295dd5963884d2c39e1a04f90cd3c5ffadc552d06f": {
+    "verdict": "BENIGN",
+    "expected_class": "BENIGN",
+    "wall_time": 24.963377475738525,
+    "packets": 140000,
+    "packets_per_sec": 5608.215480299634,
+    "peak_rss": 945348608,
+    "clean": true
+  },
+  "ec2476c9fb34a202b11d1138286143ad2cd7055fbc9401baf150b3d513c3d0ae": {
+    "verdict": "BENIGN",
+    "expected_class": "ENCRYPTED_MALWARE",
+    "wall_time": 16.884562730789185,
+    "packets": 88560,
+    "packets_per_sec": 5245.027745877593,
+    "peak_rss": 376549376,
+    "clean": true
+  },
+  "fd893402b392188a4c2a79055776e03def1b7f3ac528397464b93fa848bf9670": {
+    "verdict": "BENIGN",
+    "expected_class": "ENCRYPTED_MALWARE",
+    "wall_time": 6.386523485183716,
+    "packets": 22000,
+    "packets_per_sec": 3444.7536364719317,
+    "peak_rss": 369758208,
+    "clean": true
+  },
+  "d38e6cd7e9e063afe5696fd6a605350b57cc430ac21b32acbec7af70ec45d414": {
+    "verdict": "BENIGN",
+    "expected_class": "ENCRYPTED_MALWARE",
+    "wall_time": 14.213562488555908,
+    "packets": 93141,
+    "packets_per_sec": 6552.966582093177,
+    "peak_rss": 304631808,
+    "clean": true
+  }
+}

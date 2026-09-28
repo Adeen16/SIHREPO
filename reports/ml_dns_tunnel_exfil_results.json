@@ -1,0 +1,35 @@
+{
+  "class_": "DNS_TUNNEL_EXFIL",
+  "model": "RandomForestClassifier",
+  "model_path": "models\\rf_dns_exfil.joblib",
+  "datasets": [
+    {
+      "dir": "NTRO-Datasets\\CIC-Bell-DNS-EXF-2021\\Attacks\\Attacks",
+      "role": "train_attack"
+    },
+    {
+      "dir": "NTRO-Datasets\\CIC-Bell-DNS-EXF-2021\\Benign\\Benign",
+      "role": "train_benign"
+    },
+    {
+      "dir": "NTRO-Datasets\\CIC-Bell-DNS-EXF-2021\\Attacks (1)\\Attacks",
+      "role": "val_attack"
+    },
+    {
+      "dir": "NTRO-Datasets\\CIC-Bell-DNS-EXF-2021\\Benign (1)\\Benign",
+      "role": "val_benign"
+    }
+  ],
+  "split_strategy": "scenario: light-traffic (train) vs heavy-traffic (val)",
+  "precision": 0.7806,
+  "recall": 0.2171,
+  "f1": 0.3397,
+  "fpr": 0.0788,
+  "train_samples": 136837,
+  "val_samples": 574408,
+  "train_positive": 53978,
+  "val_positive": 323698,
+  "train_time_s": 0.81,
+  "inference_time_ms": 364.775,
+  "note": "All metrics from sklearn on held-out validation. No fabrication."
+}

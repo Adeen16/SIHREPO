@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "properties": {
+    "type":         { "type": "string",  "description": "Must be flow_update" },
+    "flow_id":      { "type": "string" },
+    "timestamp":    { "type": "number",  "description": "Capture-time window start (epoch s)" },
+    "threat_class": { "type": "string",  "description": "Canonical label, e.g. BENIGN, DDOS" },
+    "confidence":   { "type": "number",  "description": "Probability [0,1]" },
+    "severity":     { "type": "string",  "description": "LOW | MEDIUM | HIGH | CRITICAL" },
+    "evidence":     { "type": "object",  "description": "Key feature values that drove the detection" }
+  },
+  "required": ["flow_id", "timestamp", "threat_class", "confidence", "evidence"]
+}

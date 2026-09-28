@@ -1,0 +1,27 @@
+{
+  "class_": "C2_BEACONING_CTU",
+  "model": "RandomForestClassifier",
+  "model_path": "models\\rf_c2_ctu.joblib",
+  "datasets": [
+    {
+      "file": "NTRO-Datasets\\CTU-13\\CTU-Malware-Capture-Botnet-42.binetflow",
+      "role": "train"
+    },
+    {
+      "file": "NTRO-Datasets\\CTU-13\\CTU-Malware-Capture-Botnet-43.binetflow",
+      "role": "val"
+    }
+  ],
+  "split_strategy": "scenario: Botnet-42 train, Botnet-43 val",
+  "precision": 0.4289,
+  "recall": 0.2657,
+  "f1": 0.3281,
+  "fpr": 0.0041,
+  "train_samples": 2824636,
+  "val_samples": 1808122,
+  "train_positive": 40961,
+  "val_positive": 20941,
+  "train_time_s": 67.143,
+  "inference_time_ms": 1153.146,
+  "note": "All metrics from sklearn on held-out validation. No fabrication."
+}

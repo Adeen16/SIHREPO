@@ -1,0 +1,29 @@
+{
+  "505f6e256381b3e427937c07ff6ab79cc5e07f205cded81324be07a29ca2db57": {
+    "verdict": "BENIGN",
+    "expected_class": "DNS_DGA_TUNNEL",
+    "wall_time": 4.221909761428833,
+    "packets": 6,
+    "packets_per_sec": 1.4211578027592429,
+    "peak_rss": 238583808,
+    "clean": true
+  },
+  "2fb06cc4cb427ad2185d8744a4b3d1b67d1336dc9324a55bbed5361043f91753": {
+    "verdict": "2",
+    "expected_class": "ENCRYPTED_MALWARE",
+    "wall_time": 3.220743417739868,
+    "packets": 48,
+    "packets_per_sec": 14.903391476519303,
+    "peak_rss": 243367936,
+    "clean": true
+  },
+  "41880c3a3acfa5ef794abc7b9142b4b41670419c74900e1e953b4a0e75fe55ee": {
+    "verdict": "BENIGN",
+    "expected_class": "RECON_PORT_SCAN",
+    "wall_time": 2.0510897636413574,
+    "packets": 4,
+    "packets_per_sec": 1.950182810575139,
+    "peak_rss": 243367936,
+    "clean": true
+  }
+}

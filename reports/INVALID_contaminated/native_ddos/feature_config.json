@@ -1,0 +1,19 @@
+{
+    "features": [
+        "flow_duration",
+        "fwd_packet_count",
+        "rev_packet_count",
+        "fwd_byte_count",
+        "rev_byte_count",
+        "fwd_bytes_per_sec",
+        "rev_bytes_per_sec",
+        "fwd_pkts_per_sec",
+        "rev_pkts_per_sec",
+        "byte_ratio",
+        "is_unidirectional",
+        "is_tcp",
+        "is_udp"
+    ],
+    "input_dimension": 13,
+    "missing_value_policy": "reject"
+}

@@ -1,16 +1,26 @@
+import logging
 from typing import Dict, Any
 from detection.detectors.base import BaseDetector, DetectionResult
 from detection.bridge import Phase6toPhase8Bridge
 from detection.inference import BaselineInferenceEngine
 
+_log = logging.getLogger(__name__)
+
 class DDoSDetector(BaseDetector):
     """
     Detects Volumetric DDoS using a hybrid approach:
     Combines the Phase 8 Random Forest ML baseline with deterministic volumetric evidence.
+    When model_dir is None or missing, runs behavioral-only (no ML inference).
     """
-    def __init__(self, model_dir: str, model_name: str = "RandomForest"):
+    def __init__(self, model_dir: str = None, model_name: str = "RandomForest"):
         self.bridge = Phase6toPhase8Bridge()
-        self.inference_engine = BaselineInferenceEngine(model_dir=model_dir, model_name=model_name)
+        self.inference_engine = None
+        if model_dir:
+            try:
+                self.inference_engine = BaselineInferenceEngine(
+                    model_dir=model_dir, model_name=model_name)
+            except Exception as e:
+                _log.warning(f"DDoSDetector: ML model unavailable ({e}); running behavioral-only.")
 
     def evaluate(self, window_snapshot, flow_state, phase6_features) -> DetectionResult:
         flow_id = flow_state.flow_id
@@ -82,9 +92,9 @@ class DDoSDetector(BaseDetector):
                 signals += 2 # Strong signal
                 reasons.append(f"Distributed burst traffic ({packets_to_dst} total packets to {flow_state.dst_ip})")
 
-            # Only run ML inference if we have enough volumetric signals to potentially trigger an alert (needs >=2 before ML, since ML gives +1)
+            # Only run ML inference if engine is loaded and we have enough volumetric signals
             is_ml_ddos = False
-            if signals >= 2:
+            if signals >= 2 and self.inference_engine is not None:
                 if dst_info["ml_predicted"] is None:
                     vector = self.bridge.convert(phase6_features)
                     inference_output = self.inference_engine.predict(vector)

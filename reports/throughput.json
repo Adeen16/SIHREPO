@@ -1,0 +1,16 @@
+{
+  "pcap": "datasets/synthetic/benign_bulk_dl.pcap",
+  "loops": 1924,
+  "total_packets": 200000,
+  "total_alerts": 0,
+  "elapsed_s": 2.097,
+  "packets_per_sec": 95379.4,
+  "target_packets_per_sec": 10000.0,
+  "pps_met": true,
+  "flows_per_sec_proxy": 0.0,
+  "target_flows_per_sec": 1000.0,
+  "detect_time_s": 1.7019,
+  "window_close_to_alert_latency_p50_us": 0,
+  "window_close_to_alert_latency_p95_us": 0,
+  "note": "All values measured; no fabrication. Fixtures are dev synthetic PCAPs, not NTRO."
+}
