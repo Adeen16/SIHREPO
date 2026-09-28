@@ -49,6 +49,14 @@ class PCAPIngestor:
             event.src_port = pkt[TCP].sport
             event.dst_port = pkt[TCP].dport
             event.protocol = "TCP"
+            # TCP flags (bitmask)
+            flags = int(pkt[TCP].flags)
+            event.tcp_flags = flags
+            event.is_syn = bool(flags & 0x002)
+            event.is_fin = bool(flags & 0x001)
+            event.is_rst = bool(flags & 0x004)
+            event.is_ack = bool(flags & 0x010)
+            event.is_psh = bool(flags & 0x008)
         elif UDP in pkt:
             event.src_port = pkt[UDP].sport
             event.dst_port = pkt[UDP].dport

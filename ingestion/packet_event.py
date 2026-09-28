@@ -19,3 +19,11 @@ class PacketEvent:
     src_port: Optional[int] = None
     dst_port: Optional[int] = None
     protocol: Optional[str] = None
+
+    # TCP flag fields (set by pcap_reader if TCP layer present; None for non-TCP)
+    tcp_flags: Optional[int] = None   # raw TCP flags bitmask
+    is_syn: bool = False
+    is_fin: bool = False
+    is_rst: bool = False
+    is_ack: bool = False
+    is_psh: bool = False

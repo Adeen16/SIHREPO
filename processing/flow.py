@@ -1,5 +1,6 @@
-from dataclasses import dataclass
-from typing import Dict, Optional, Tuple
+from __future__ import annotations
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Tuple
 from ingestion.packet_event import PacketEvent
 
 @dataclass
@@ -35,6 +36,59 @@ class FlowState:
     def duration(self) -> float:
         """Returns the duration of the flow in seconds."""
         return self.last_seen - self.first_seen
+
+    # --- Extended Stage 3 fields -------------------------------------------
+    # TCP flag counters (always 0 for UDP)
+    syn_count: int = 0
+    fin_count: int = 0
+    rst_count: int = 0
+    ack_count: int = 0
+    psh_count: int = 0
+
+    # Inter-arrival time lists — populated lazily to bound memory
+    # Capped at _IAT_CAP entries per direction to avoid unbounded growth.
+    _IAT_CAP: int = field(default=500, init=False, repr=False)
+    fwd_iat_list: List[float] = field(default_factory=list)   # fwd IATs
+    rev_iat_list: List[float] = field(default_factory=list)   # rev IATs
+
+    # Last packet timestamp per direction (for IAT calculation)
+    _last_fwd_ts: Optional[float] = field(default=None, init=False, repr=False)
+    _last_rev_ts: Optional[float] = field(default=None, init=False, repr=False)
+
+    @property
+    def fwd_iat_mean(self) -> float:
+        if not self.fwd_iat_list:
+            return 0.0
+        return sum(self.fwd_iat_list) / len(self.fwd_iat_list)
+
+    @property
+    def fwd_iat_std(self) -> float:
+        n = len(self.fwd_iat_list)
+        if n < 2:
+            return 0.0
+        mean = self.fwd_iat_mean
+        return (sum((x - mean) ** 2 for x in self.fwd_iat_list) / (n - 1)) ** 0.5
+
+    @property
+    def rev_iat_mean(self) -> float:
+        if not self.rev_iat_list:
+            return 0.0
+        return sum(self.rev_iat_list) / len(self.rev_iat_list)
+
+    @property
+    def rev_iat_std(self) -> float:
+        n = len(self.rev_iat_list)
+        if n < 2:
+            return 0.0
+        mean = self.rev_iat_mean
+        return (sum((x - mean) ** 2 for x in self.rev_iat_list) / (n - 1)) ** 0.5
+
+    @property
+    def pkt_size_mean(self) -> float:
+        total = self.fwd_packet_count + self.rev_packet_count
+        if total == 0:
+            return 0.0
+        return (self.fwd_byte_count + self.rev_byte_count) / total
 
 class FlowProcessor:
     """
@@ -77,7 +131,7 @@ class FlowProcessor:
         if key not in self.flows:
             # First time seeing this flow, direction of this packet is forward
             flow_id = f"{packet.src_ip}:{packet.src_port}-{packet.dst_ip}:{packet.dst_port}-{packet.protocol}"
-            self.flows[key] = FlowState(
+            new_flow = FlowState(
                 flow_id=flow_id,
                 src_ip=packet.src_ip,
                 dst_ip=packet.dst_ip,
@@ -93,7 +147,21 @@ class FlowProcessor:
                 rev_packet_count=0,
                 rev_byte_count=0
             )
-            return self.flows[key]
+            # Initialize fwd IAT tracking with the first packet's timestamp
+            new_flow._last_fwd_ts = packet.timestamp
+            # Count TCP flags from the first packet
+            if packet.is_syn:
+                new_flow.syn_count += 1
+            if packet.is_fin:
+                new_flow.fin_count += 1
+            if packet.is_rst:
+                new_flow.rst_count += 1
+            if packet.is_ack:
+                new_flow.ack_count += 1
+            if packet.is_psh:
+                new_flow.psh_count += 1
+            self.flows[key] = new_flow
+            return new_flow
             
         flow = self.flows[key]
         
@@ -109,11 +177,32 @@ class FlowProcessor:
             
         # Determine direction relative to the initiator
         # The initiator is whoever was seen first (stored in src_ip/src_port)
-        if packet.src_ip == flow.src_ip and packet.src_port == flow.src_port:
+        is_forward = (packet.src_ip == flow.src_ip and packet.src_port == flow.src_port)
+        if is_forward:
+            # IAT
+            if flow._last_fwd_ts is not None and len(flow.fwd_iat_list) < flow._IAT_CAP:
+                flow.fwd_iat_list.append(packet.timestamp - flow._last_fwd_ts)
+            flow._last_fwd_ts = packet.timestamp
             flow.fwd_packet_count += 1
             flow.fwd_byte_count += packet.length
         else:
+            # IAT
+            if flow._last_rev_ts is not None and len(flow.rev_iat_list) < flow._IAT_CAP:
+                flow.rev_iat_list.append(packet.timestamp - flow._last_rev_ts)
+            flow._last_rev_ts = packet.timestamp
             flow.rev_packet_count += 1
             flow.rev_byte_count += packet.length
+
+        # TCP flag counters
+        if packet.is_syn:
+            flow.syn_count += 1
+        if packet.is_fin:
+            flow.fin_count += 1
+        if packet.is_rst:
+            flow.rst_count += 1
+        if packet.is_ack:
+            flow.ack_count += 1
+        if packet.is_psh:
+            flow.psh_count += 1
             
         return flow
