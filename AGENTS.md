@@ -846,3 +846,31 @@ The objective is to build a technically credible implementation of the actual pr
 
 ============================================================
 END OF AGENTS.MD SPECIFICATION
+
+============================================================
+25. STAGES 5-10 UPDATES
+============================================================
+
+New packages:
+- fastapi
+- uvicorn
+- websockets
+- chart.js (CDN)
+
+Commands:
+- python scripts/train_all.py (build dataset -> train -> evaluate)
+- python -m uvicorn fastapi_app.main:app --port 8000 (Start API)
+- python scripts/stream_pcap.py (E2E passive-safety pipeline)
+
+Stage List:
+- Stage 5: ML Baseline
+- Stage 6: Backend API
+- Stage 7: E2E Validation
+- Stage 8: Dashboard
+- Stage 9: Pipeline Integration
+- Stage 10: Documentation & Handoff
+
+Rules:
+- Passive-safety test: No network egress from API.
+- No fabricated metrics: All numbers in reports and dashboards come from actual RF/LR inference and PCAP metadata.
+- Two-path/feature-profile rule: Ensure different threat profiles are explicitly captured in validation without merging domains unnaturally.
