@@ -1,7 +1,34 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 from ingestion.packet_event import PacketEvent
+
+@dataclass
+class FlowRecord:
+    """Canonical schema for a flow, produced by both PCAP and CSV/binetflow adapters."""
+    flow_id: str
+    src_ip: str
+    dst_ip: str
+    src_port: int
+    dst_port: int
+    protocol: str
+    first_seen: float
+    last_seen: float
+    packet_count: int
+    byte_count: int
+    fwd_packet_count: int
+    rev_packet_count: int
+    fwd_byte_count: int
+    rev_byte_count: int
+    syn_count: int = 0
+    fin_count: int = 0
+    rst_count: int = 0
+    ack_count: int = 0
+    psh_count: int = 0
+    fwd_iat_mean: float = 0.0
+    fwd_iat_std: float = 0.0
+    rev_iat_mean: float = 0.0
+    rev_iat_std: float = 0.0
 
 @dataclass
 class FlowState:
