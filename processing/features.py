@@ -1,5 +1,6 @@
 from typing import Dict, Any
 from processing.window import WindowSnapshot
+from processing.feature_math import compute_byte_ratio
 
 class FeatureExtractor:
     """
@@ -19,7 +20,8 @@ class FeatureExtractor:
         
         # 2. Compute flow-specific features
         for flow_id, flow in snapshot.flows.items():
-            duration = max(flow.duration, 1e-6)  # Avoid division by zero
+            # duration: use actual value; rates are 0.0 at zero duration (documented)
+            duration = flow.duration
             
             fwd_bytes = flow.fwd_byte_count
             rev_bytes = flow.rev_byte_count
@@ -27,17 +29,31 @@ class FeatureExtractor:
             rev_pkts = flow.rev_packet_count
             
             # Flow-level behavior
+            # Rates are 0.0 when duration==0 (instantaneous flow); documented edge case.
+            if duration > 0:
+                fwd_bytes_per_sec = fwd_bytes / duration
+                rev_bytes_per_sec = rev_bytes / duration
+                fwd_pkts_per_sec = fwd_pkts / duration
+                rev_pkts_per_sec = rev_pkts / duration
+            else:
+                fwd_bytes_per_sec = 0.0
+                rev_bytes_per_sec = 0.0
+                fwd_pkts_per_sec = 0.0
+                rev_pkts_per_sec = 0.0
+
             flow_features = {
                 "flow_duration": float(flow.duration),
                 "fwd_packet_count": float(fwd_pkts),
                 "rev_packet_count": float(rev_pkts),
                 "fwd_byte_count": float(fwd_bytes),
                 "rev_byte_count": float(rev_bytes),
-                "fwd_bytes_per_sec": fwd_bytes / duration,
-                "rev_bytes_per_sec": rev_bytes / duration,
-                "fwd_pkts_per_sec": fwd_pkts / duration,
-                "rev_pkts_per_sec": rev_pkts / duration,
-                "byte_ratio": fwd_bytes / (rev_bytes + 1e-6),
+                "fwd_bytes_per_sec": fwd_bytes_per_sec,
+                "rev_bytes_per_sec": rev_bytes_per_sec,
+                "fwd_pkts_per_sec": fwd_pkts_per_sec,
+                "rev_pkts_per_sec": rev_pkts_per_sec,
+                # byte_ratio uses shared compute_byte_ratio (processing/feature_math.py):
+                # rev>0 -> fwd/rev; rev==0,fwd>0 -> BYTE_RATIO_CAP; both 0 -> 0.0
+                "byte_ratio": compute_byte_ratio(fwd_bytes, rev_bytes),
             }
             
             # Enrich with source-IP context (essential for scanning/flooding detection)

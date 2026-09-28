@@ -1,0 +1,48 @@
+# SIH 26145 — Default configuration
+# All values are overridable via environment variables or per-run config.
+
+window:
+  window_seconds: 10.0
+  slide_seconds: 1.0
+  beacon_horizon_seconds: 600.0
+  channel_lru_cap: 10000
+
+seed: 1337
+
+datasets_dir: "NTRO-Datasets"          # overridden by env NTRO_DATASETS_DIR
+processed_dir: "datasets/processed"
+synthetic_dir: "datasets/synthetic"
+models_dir:    "models"
+reports_dir:   "reports"
+
+feature_profiles:
+  flow_core:   true
+  entity_window: true
+  beacon:      true
+  dns:         true
+  tls:         true
+
+byte_ratio_cap: 10000.0                # BYTE_RATIO_CAP: used by compute_byte_ratio
+
+thresholds:                            # placeholder; real values written by ml/train.py
+  ddos: 0.5
+  c2_beaconing: 0.5
+  dns_dga_tunnel: 0.5
+  encrypted_malware: 0.5
+  recon_port_scan: 0.5
+  data_exfiltration: 0.5
+
+severity:
+  low_max: 35
+  medium_max: 60
+  high_max: 80
+  # >= 80 => CRITICAL
+  class_weights:
+    ddos: 1.2
+    c2_beaconing: 1.0
+    dns_dga_tunnel: 1.0
+    encrypted_malware: 1.0
+    recon_port_scan: 0.9
+    data_exfiltration: 1.1
+    benign: 1.0
+  persistence_window_count: 3   # P for persistence = min(1, window_count/P)

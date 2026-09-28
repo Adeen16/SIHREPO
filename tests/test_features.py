@@ -79,4 +79,5 @@ def test_extract_features_port_scan_context():
         assert vec["src_ip_flow_count"] == 5.0
         assert vec["src_ip_unique_dst_ips"] == 1.0
         assert vec["src_ip_unique_dst_ports"] == 5.0
-        assert vec["fwd_bytes_per_sec"] > 0 # divided by 1e-6
+        # duration==0 (first_seen==last_seen) → rates are 0.0 (documented edge case)
+        assert vec["fwd_bytes_per_sec"] == 0.0
