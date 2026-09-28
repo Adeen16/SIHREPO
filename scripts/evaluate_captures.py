@@ -49,33 +49,76 @@ def main():
         start_time = time.time()
         
         packet_count = 0
-        try:
-            if args.ingestor == "dpkt":
-                reader = FastPCAPIngestor(pcap_path)
-            else:
-                reader = PCAPIngestor(pcap_path)
-            window_mgr = SlidingWindowManager(window_seconds=10.0, slide_seconds=1.0)
-            extractor = FeatureExtractor()
-            
-            for pkt_event in reader:
-                packet_count += 1
-                snapshots = window_mgr.add_packet(pkt_event)
-                for snap in snapshots:
-                    feats = extractor.extract_features(snap)
-                    
-                if time.time() - start_time > args.timeout:
-                    print(f"  Timeout reached after {packet_count} packets")
-                    break
-                    
-        except Exception as e:
-            print(f"  Error processing: {e}")
-            
-        elapsed = time.time() - start_time
-        pkts_per_sec = packet_count / elapsed if elapsed > 0 else 0
-        
         # The current baseline has no actual classifier hooked up here,
         # so it defaults to BENIGN.
-        verdict = "BENIGN"
+        
+        # Load model only once
+        if getattr(main, "model_bundle", None) is None:
+            import joblib
+            try:
+                main.model_bundle = joblib.load("models/baseline_rf.joblib")
+                print("  Loaded RF model.")
+            except:
+                main.model_bundle = None
+                
+        import asyncio
+        import websockets
+        
+        async def run_inference():
+            verdict = "BENIGN"
+            try:
+                async with websockets.connect("ws://localhost:8000/ws/telemetry") as ws:
+                    if args.ingestor == "dpkt":
+                        reader = FastPCAPIngestor(pcap_path)
+                    else:
+                        reader = PCAPIngestor(pcap_path)
+                    window_mgr = SlidingWindowManager(window_seconds=10.0, slide_seconds=1.0)
+                    extractor = FeatureExtractor()
+                    
+                    nonlocal packet_count
+                    for pkt_event in reader:
+                        packet_count += 1
+                        snapshots = window_mgr.add_packet(pkt_event)
+                        for snap in snapshots:
+                            feats = extractor.extract_features(snap)
+                            
+                            if main.model_bundle:
+                                import pandas as pd
+                                df = pd.DataFrame(feats.values())
+                                preprocessor = main.model_bundle["preprocessor"]
+                                features = main.model_bundle["features"]
+                                clf = main.model_bundle["classifier"]
+                                
+                                X = preprocessor.transform(df, features)[features]
+                                preds = clf.predict(X)
+                                probs = clf.predict_proba(X)
+                                
+                                for i, flow_id in enumerate(feats.keys()):
+                                    prediction = str(preds[i])
+                                    confidence = float(probs[i].max())
+                                    if prediction != "BENIGN":
+                                        verdict = prediction
+                                    event = {
+                                        "type": "flow_update",
+                                        "flow_id": flow_id,
+                                        "timestamp": snap.window_start,
+                                        "prediction": prediction,
+                                        "confidence": confidence,
+                                        "features": {k: float(v) if pd.notna(v) else 0.0 for k, v in feats[flow_id].items()}
+                                    }
+                                    await ws.send(json.dumps(event))
+                            
+                        if time.time() - start_time > args.timeout:
+                            print(f"  Timeout reached after {packet_count} packets")
+                            break
+            except Exception as e:
+                print(f"  Error processing: {e}")
+            return verdict
+            
+        verdict = asyncio.run(run_inference())
+        
+        elapsed = time.time() - start_time
+        pkts_per_sec = packet_count / elapsed if elapsed > 0 else 0
         
         res = {
             "verdict": verdict,
