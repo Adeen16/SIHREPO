@@ -1,0 +1,10 @@
+{
+  "NTRO-Datasets/PCAPS/dataset_manifest.json": "80362f38b44d009490cd37474c5fddf95c79d8707fa64b6ee3f4d022e72b92ce",
+  "NTRO-Datasets/PCAPS/generate_manifest.py": "5da7172b266852ac01b9bfb2fad8687072b9f4a39ef2a6f997135e8c444ede9c",
+  "NTRO-Datasets/PCAPS/01_benign/2013-12-17_capture1.pcap": "9daf9c1746dae37a234bac32090e8bc925e837af78cfffc3b4cc7c46d901542b",
+  "NTRO-Datasets/PCAPS/02_ddos/2015-09-10_winlinux.pcap": "c44bec579386bf1ca306e1cc4358fe3d910e11b887f5f885756d7e9aa2560555",
+  "NTRO-Datasets/PCAPS/03_c2_beaconing/botnet-capture-20110810-neris.pcap": "b89cd5931f62d87ceff266568c97c6e36e56dd0330813cacadbc14a6c5576a36",
+  "NTRO-Datasets/PCAPS/04_dns_dga_tunneling/2014-02-07_capture-win3.pcap": "505f6e256381b3e427937c07ff6ab79cc5e07f205cded81324be07a29ca2db57",
+  "NTRO-Datasets/PCAPS/05_encrypted_malware/2017-06-24_win2.pcap": "2fb06cc4cb427ad2185d8744a4b3d1b67d1336dc9324a55bbed5361043f91753",
+  "NTRO-Datasets/PCAPS/06_reconnaissance/botnet-capture-20110812-rbot.pcap": "41880c3a3acfa5ef794abc7b9142b4b41670419c74900e1e953b4a0e75fe55ee"
+}
