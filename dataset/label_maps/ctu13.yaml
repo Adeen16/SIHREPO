@@ -1,0 +1,109 @@
+# dataset/label_maps/ctu13.yaml
+# --------------------------------
+# Config-driven label map for CTU-13 .binetflow files.
+# CTU-13 uses flow direction labels in the 'Label' column.
+#
+# CRITICAL DISTINCTIONS:
+#   From-Normal-*   → BENIGN (ground_truth): manually verified normal traffic
+#   *Background*    → UNLABELED: NOT verified benign; excluded from supervised
+#                     training and FPR computation by default. An opt-in
+#                     experiment 'background_as_weak_benign' may use them.
+#   From-Botnet-*   → varies by behaviour token (see rules below)
+#   To-Botnet-*     → UNKNOWN (we see the server side; label unknown)
+#
+# Each rule has a 'prefix' match (starts-with) or 'exact' match.
+# Rules are evaluated in order; first match wins.
+
+rules:
+  - match_type: "prefix"
+    match: "From-Normal-"
+    canonical: "BENIGN"
+    label_source: "ground_truth"
+    label_group: ""
+    note: "Manually verified normal host traffic"
+
+  - match_type: "exact"
+    match: "Background"
+    canonical: "UNLABELED"
+    label_source: "unlabeled"
+    label_group: "background"
+    note: "Unlabelled background traffic; excluded from supervised training by default"
+
+  - match_type: "prefix"
+    match: "From-Background-"
+    canonical: "UNLABELED"
+    label_source: "unlabeled"
+    label_group: "background"
+    note: "Unlabelled background traffic"
+
+  - match_type: "prefix"
+    match: "To-Background-"
+    canonical: "UNLABELED"
+    label_source: "unlabeled"
+    label_group: "background"
+    note: "Unlabelled background traffic"
+
+  # From-Botnet-* rules — split by behaviour token
+  - match_type: "contains"
+    match: "CC"
+    require_prefix: "From-Botnet-"
+    canonical: "C2_BEACONING"
+    label_source: "weak"
+    label_group: "botnet_c2"
+    note: "Botnet C&C traffic — weak label (may include non-beacon flows)"
+
+  - match_type: "contains"
+    match: "IRC"
+    require_prefix: "From-Botnet-"
+    canonical: "C2_BEACONING"
+    label_source: "weak"
+    label_group: "botnet_irc_c2"
+    note: "IRC-based C2 channel"
+
+  - match_type: "contains"
+    match: "SPAM"
+    require_prefix: "From-Botnet-"
+    canonical: "UNKNOWN"
+    label_source: "weak"
+    label_group: "botnet_spam"
+    note: "Botnet spam — not C2 beaconing; held as unknown-attack for open-set eval"
+
+  - match_type: "contains"
+    match: "DNS"
+    require_prefix: "From-Botnet-"
+    canonical: "UNKNOWN"
+    label_source: "weak"
+    label_group: "botnet_dns"
+    note: "Botnet DNS traffic — insufficient to label as DGA/tunnel; held as unknown"
+
+  - match_type: "contains"
+    match: "ClickFraud"
+    require_prefix: "From-Botnet-"
+    canonical: "UNKNOWN"
+    label_source: "weak"
+    label_group: "botnet_clickfraud"
+    note: "Click fraud — out of the six mandatory classes"
+
+  - match_type: "contains"
+    match: "PortScan"
+    require_prefix: "From-Botnet-"
+    canonical: "UNKNOWN"
+    label_source: "weak"
+    label_group: "botnet_portscan"
+    note: "Bot-driven port scan — insufficient ground truth to label as RECON_PORT_SCAN; held as unknown"
+
+  # Catch-all for remaining From-Botnet-* not matched above
+  - match_type: "prefix"
+    match: "From-Botnet-"
+    canonical: "UNKNOWN"
+    label_source: "weak"
+    label_group: "botnet_other"
+    note: "Botnet traffic with unrecognised behaviour token"
+
+  # To-Botnet-* — we see server side; label is ambiguous
+  - match_type: "prefix"
+    match: "To-Botnet-"
+    canonical: "UNKNOWN"
+    label_source: "weak"
+    label_group: "to_botnet"
+    note: "Responder-side botnet flows; label ambiguous"

@@ -1,0 +1,100 @@
+# dataset/label_maps/cic2018.yaml
+# --------------------------------
+# Config-driven label map for CIC-IDS2018 (Wednesday TrafficForML CSV variant).
+# Each entry: {match: <exact or prefix>, canonical: <CanonicalLabel name>,
+#              label_source, label_group, note}
+#
+# Unmatched labels → UNKNOWN (logged in AdapterStats).
+# CIC-2018 has no clean port-scan, DGA, or exfil class — see data_coverage.md.
+
+rules:
+  - match: "Benign"
+    canonical: "BENIGN"
+    label_source: "ground_truth"
+    label_group: ""
+    note: "Manually labelled normal traffic"
+
+  - match: "Bot"
+    canonical: "C2_BEACONING"
+    label_source: "weak"
+    label_group: "botnet_ares"
+    note: "Ares-botnet activity — includes C2 check-ins and other behaviours; weak label"
+
+  - match: "DDoS attacks-LOIC-HTTP"
+    canonical: "DDOS"
+    label_source: "ground_truth"
+    label_group: "ddos_loic_http"
+    note: "LOIC HTTP flood"
+
+  - match: "DDOS attack-HOIC"
+    canonical: "DDOS"
+    label_source: "ground_truth"
+    label_group: "ddos_hoic"
+    note: "HOIC flood"
+
+  - match: "DDOS attack-LOIC-UDP"
+    canonical: "DDOS"
+    label_source: "ground_truth"
+    label_group: "ddos_loic_udp"
+    note: "LOIC UDP flood"
+
+  - match: "DoS attacks-Hulk"
+    canonical: "DDOS"
+    label_source: "ground_truth"
+    label_group: "dos_hulk"
+    note: "Single-source HTTP flood (DoS not DDoS, but same detector class)"
+
+  - match: "DoS attacks-GoldenEye"
+    canonical: "DDOS"
+    label_source: "ground_truth"
+    label_group: "dos_goldeneye"
+    note: "Single-source HTTP flood"
+
+  - match: "DoS attacks-SlowHTTPTest"
+    canonical: "DDOS"
+    label_source: "ground_truth"
+    label_group: "dos_slowhttp"
+    note: "Slow HTTP test"
+
+  - match: "DoS attacks-Slowloris"
+    canonical: "DDOS"
+    label_source: "ground_truth"
+    label_group: "dos_slowloris"
+    note: "Slowloris"
+
+  # Out-of-scope attacks — retained as UNKNOWN for open-set eval holdout
+  - match: "FTP-BruteForce"
+    canonical: "UNKNOWN"
+    label_source: "ground_truth"
+    label_group: "brute_force_ftp"
+    note: "Out of the six mandatory classes; used as open-set holdout"
+
+  - match: "SSH-Bruteforce"
+    canonical: "UNKNOWN"
+    label_source: "ground_truth"
+    label_group: "brute_force_ssh"
+    note: "Out of the six mandatory classes; used as open-set holdout"
+
+  - match: "Brute Force -Web"
+    canonical: "UNKNOWN"
+    label_source: "ground_truth"
+    label_group: "brute_force_web"
+    note: "Out of the six mandatory classes; used as open-set holdout"
+
+  - match: "Brute Force -XSS"
+    canonical: "UNKNOWN"
+    label_source: "ground_truth"
+    label_group: "xss"
+    note: "Out of the six mandatory classes; used as open-set holdout"
+
+  - match: "SQL Injection"
+    canonical: "UNKNOWN"
+    label_source: "ground_truth"
+    label_group: "sqli"
+    note: "Out of the six mandatory classes; used as open-set holdout"
+
+  - match: "Infiltration"
+    canonical: "UNKNOWN"
+    label_source: "ground_truth"
+    label_group: "infiltration"
+    note: "Out of the six mandatory classes; used as open-set holdout"
