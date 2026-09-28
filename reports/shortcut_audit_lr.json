@@ -1,0 +1,12 @@
+{
+  "model_family": "LogisticRegression",
+  "audit_type": "shortcut_detection",
+  "findings": [
+    {
+      "feature": "packet_length_variance",
+      "risk": "LOW",
+      "description": "Linear models tend to smooth out extreme outliers and focus on aggregate behavior."
+    }
+  ],
+  "mitigation": "Requires robust scaling and log1p transforms to handle heavy-tailed features without relying on single extreme values as shortcuts."
+}

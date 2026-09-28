@@ -1,53 +1,84 @@
 """
 scripts/build_dataset.py
 ------------------------
-Build processed dataset from synthetic PCAPs.
-Usage:
-    python -m scripts.build_dataset [--synth datasets/synthetic/] [--out datasets/processed/] [--seed 1337]
+Build dataset from real PCAPs and records, enforcing capture-level splits.
 """
-from __future__ import annotations
 import argparse
-import json
 import pathlib
-import sys
+import yaml
+import json
+import pandas as pd
+from typing import List
 
+from ml.blind_guard import assert_not_blind
+from ml.dataset_builder import pcap_scenario_to_rows
 
 def main():
-    parser = argparse.ArgumentParser(description="Build Parquet dataset from synthetic PCAPs")
-    parser.add_argument("--synth", default="datasets/synthetic/")
-    parser.add_argument("--out",   default="datasets/processed/")
-    parser.add_argument("--seed",  type=int, default=1337)
-    parser.add_argument("--window-seconds", type=float, default=10.0)
-    parser.add_argument("--slide-seconds",  type=float, default=1.0)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--manifest", default="configs/captures.yaml")
+    parser.add_argument("--out", default="datasets/processed/")
     args = parser.parse_args()
 
-    synth_dir = pathlib.Path(args.synth)
-    out_dir   = pathlib.Path(args.out)
+    out_dir = pathlib.Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    from ml.dataset_builder import (
-        build_from_synthetic, temporal_split, baseline_report, label_distribution
-    )
+    with open(args.manifest, "r") as f:
+        manifest = yaml.safe_load(f)
 
-    print(f"Building dataset from {synth_dir} ...")
-    df = build_from_synthetic(synth_dir, args.window_seconds, args.slide_seconds)
-    print(f"Total rows: {len(df)}")
-    print(f"Label distribution:\n{label_distribution(df)}")
-
-    print("Splitting...")
-    df_train, df_val, df_test = temporal_split(df, seed=args.seed)
-
-    for name, split in [("train", df_train), ("val", df_val), ("test", df_test)]:
-        path = out_dir / f"{name}.parquet"
-        split.to_parquet(str(path), index=False)
-        print(f"  Wrote {name}: {len(split)} rows → {path}")
-
-    report = baseline_report(df_train, df_val, df_test)
-    report_path = out_dir / "baseline_report.json"
-    report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
-    print(f"Baseline report → {report_path}")
-    print(f"Baseline accuracy (test): {report['baseline_accuracy_test']:.3f}")
-
+    splits = {"train": [], "validation": []}
+    
+    for cap in manifest.get("captures", []):
+        role = cap.get("role")
+        if role not in ["train", "validation"]:
+            continue
+            
+        sha256 = cap.get("sha256")
+        assert_not_blind(sha256, args.manifest)
+        
+        path = pathlib.Path(cap.get("path"))
+        expected_class = cap.get("expected_class")
+        
+        if path.suffix in [".pcap", ".pcapng"] and path.exists():
+            print(f"Processing {path} ({role})")
+            
+            # Use fast ingestor
+            from ingestion.fast_pcap import FastPCAPIngestor
+            from processing.window import SlidingWindowManager
+            from processing.features import FeatureExtractor
+            from dataset.schema import CanonicalLabel
+            
+            try:
+                label_enum = CanonicalLabel[expected_class]
+            except KeyError:
+                label_enum = CanonicalLabel.BENIGN
+                
+            reader = FastPCAPIngestor(str(path))
+            window_mgr = SlidingWindowManager(window_seconds=10.0, slide_seconds=1.0)
+            extractor = FeatureExtractor()
+            
+            for pkt_event in reader:
+                snapshots = window_mgr.add_packet(pkt_event)
+                for snap in snapshots:
+                    feature_map = extractor.extract_features(snap)
+                    for flow_id, vec in feature_map.items():
+                        from ml.feature_contract import FEATURE_COLUMNS, LABEL_COLUMN
+                        row = {k: vec.get(k, 0.0) for k in FEATURE_COLUMNS}
+                        row[LABEL_COLUMN] = label_enum.value
+                        row["label_name"] = label_enum.name
+                        row["feature_source"] = "pcap_pipeline"
+                        row["capture_sha256"] = sha256
+                        splits[role].append(row)
+                        
+    for split_name, rows in splits.items():
+        if not rows:
+            print(f"Skipping empty split: {split_name}")
+            continue
+        df = pd.DataFrame(rows)
+        out_path = out_dir / f"{split_name}.parquet"
+        df.to_parquet(out_path, index=False)
+        print(f"Wrote {len(df)} rows to {out_path}")
+        
+    print("Done building dataset.")
 
 if __name__ == "__main__":
     main()
