@@ -49,3 +49,14 @@ models/
 
 # Environment variables
 .env
+
+# Datasets and generated data
+datasets/
+models/
+reports/
+NTRO-Datasets/
+*.pcap
+*.pcapng
+*.binetflow
+*.parquet
+*.npz

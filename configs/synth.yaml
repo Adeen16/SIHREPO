@@ -1,0 +1,11 @@
+# configs/synth.yaml
+# Synthetic traffic generation configuration.
+# Used by: python -m scripts.generate_synthetic --config configs/synth.yaml
+
+seed: 1337
+out_dir: "datasets/synthetic"
+
+# Address ranges (must match datasets_gen/addresses.py; do not change)
+# Internal:  10.0.0.0/16
+# External:  198.51.100.0/24, 203.0.113.0/24, 192.0.2.0/24
+# Botnet:    100.64.0.0/10
