@@ -32,7 +32,7 @@ def train_baseline_lr():
     y_val = df_val[LABEL_COLUMN]
     
     print("Training Logistic Regression...")
-    clf = LogisticRegression(max_iter=1000, multi_class="multinomial")
+    clf = LogisticRegression(max_iter=1000)
     clf.fit(X_train, y_train)
     
     print("Evaluating...")
