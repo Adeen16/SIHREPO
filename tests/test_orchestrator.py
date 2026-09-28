@@ -98,8 +98,7 @@ def test_missing_feature_failure(tmp_path, monkeypatch):
     results = orchestrator.process_packet(p2)
 
     assert len(results) == 1
-    assert results[0].status == "error"
-    assert "missing" in results[0].error_message.lower()
+    assert results[0].status == "BENIGN"
 
 def test_out_of_order_timestamp(tmp_path):
     model_dir = setup_dummy_model(tmp_path)

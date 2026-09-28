@@ -1,64 +1,52 @@
 {
     "datasets": [
         {
-            "file": "NTRO-Datasets/PCAPS/01_benign/2013-12-17_capture1.pcap",
-            "expected_category": "BENIGN",
+            "file": "NTRO-Datasets/PCAPS/05_encrypted_malware/2017-06-24_win2.pcap",
+            "expected_category": "ENCRYPTED_MALWARE",
             "start_packet": 0,
-            "packet_limit": 10000,
-            "packets": 10000,
+            "packet_limit": 25000,
+            "packets": 25000,
             "flows": 0,
-            "windows": 8,
+            "windows": 1736,
             "detections": [
                 {
-                    "threat_type": "DDoS",
-                    "count": 4,
+                    "threat_type": "C2_BEACONING",
+                    "count": 32,
                     "evidence": {
-                        "packets_per_sec": 396.8246239238071,
-                        "bytes_per_sec": 24603.12668327604,
-                        "flows_to_dst": 7,
-                        "reason": "ML model predicted DDoS and Distributed burst traffic (2256 total packets to 10.0.0.46)"
+                        "periodicity_cv": 0.47194371805606894,
+                        "windows_seen": 7,
+                        "packet_count": 3,
+                        "dst_ip": "fe80::5440:d617:fa87:1f07",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 7 windows"
                     },
-                    "flow_id": "173.194.112.15:443-10.0.0.46:57231-TCP",
+                    "flow_id": "fe80::da58:d7ff:fe00:f72:547-fe80::5440:d617:fa87:1f07:546-UDP",
                     "severity": "HIGH",
-                    "confidence": 1.0
+                    "confidence": 0.6666666666666666
                 },
                 {
-                    "threat_type": "DDoS",
-                    "count": 4,
+                    "threat_type": "ENCRYPTED_MALWARE",
+                    "count": 1,
                     "evidence": {
-                        "packets_per_sec": 401.1768531802965,
-                        "bytes_per_sec": 24872.964897178383,
-                        "flows_to_dst": 7,
-                        "reason": "ML model predicted DDoS and Distributed burst traffic (2256 total packets to 10.0.0.46)"
+                        "tls_sni_present": false,
+                        "windows_seen": 4,
+                        "total_bytes": 6046,
+                        "reason": "Missing SNI in TLS ClientHello and Sustained long-lived low-volume TLS connection (4 windows)"
                     },
-                    "flow_id": "173.194.112.21:443-10.0.0.46:42633-TCP",
-                    "severity": "HIGH",
-                    "confidence": 1.0
-                },
-                {
-                    "threat_type": "DDoS",
-                    "count": 4,
-                    "evidence": {
-                        "packets_per_sec": 60787.014492753624,
-                        "bytes_per_sec": 6595391.072463768,
-                        "flows_to_dst": 7,
-                        "reason": "High traffic volume (60787.01 pkts/sec) and Distributed burst traffic (2256 total packets to 10.0.0.46)"
-                    },
-                    "flow_id": "173.194.112.0:443-10.0.0.46:43713-TCP",
-                    "severity": "HIGH",
-                    "confidence": 1.0
+                    "flow_id": "192.168.1.112:49161-198.100.127.43:443-TCP",
+                    "severity": "MEDIUM",
+                    "confidence": 0.7
                 },
                 {
                     "threat_type": "C2_BEACONING",
-                    "count": 2,
+                    "count": 1,
                     "evidence": {
-                        "periodicity_cv": 2.164548825833509,
+                        "periodicity_cv": 2.112620005836347,
                         "windows_seen": 5,
-                        "packet_count": 73,
-                        "dst_ip": "10.0.0.46",
-                        "reason": "Sustained communication across 5 windows and Sufficient packet volume (73)"
+                        "packet_count": 21,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Sustained communication across 5 windows and Sufficient packet volume (21)"
                     },
-                    "flow_id": "180.111.13.117:32863-10.0.0.46:40323-TCP",
+                    "flow_id": "192.168.1.112:49161-198.100.127.43:443-TCP",
                     "severity": "HIGH",
                     "confidence": 0.6666666666666666
                 },
@@ -66,13 +54,13 @@
                     "threat_type": "C2_BEACONING",
                     "count": 1,
                     "evidence": {
-                        "periodicity_cv": 1.127917976558107,
+                        "periodicity_cv": 3.8879457426586916,
                         "windows_seen": 5,
-                        "packet_count": 11,
-                        "dst_ip": "1.34.38.64",
-                        "reason": "Sustained communication across 5 windows and Sufficient packet volume (11)"
+                        "packet_count": 20,
+                        "dst_ip": "46.38.234.156",
+                        "reason": "Sustained communication across 5 windows and Sufficient packet volume (20)"
                     },
-                    "flow_id": "10.0.0.46:58466-1.34.38.64:13690-TCP",
+                    "flow_id": "192.168.1.112:49163-46.38.234.156:4743-TCP",
                     "severity": "HIGH",
                     "confidence": 0.6666666666666666
                 },
@@ -80,20 +68,2848 @@
                     "threat_type": "C2_BEACONING",
                     "count": 1,
                     "evidence": {
-                        "periodicity_cv": 0.40968645102319057,
-                        "windows_seen": 5,
-                        "packet_count": 6,
-                        "dst_ip": "189.18.214.171",
-                        "reason": "Highly regular inter-arrival timing (CV=0.41) and Sustained communication across 5 windows"
+                        "periodicity_cv": 0.4701655564555414,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
                     },
-                    "flow_id": "10.0.0.46:54633-189.18.214.171:36452-TCP",
+                    "flow_id": "192.168.1.112:49165-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47006604273502967,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49168-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47003629083303283,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49180-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47022477212783476,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49183-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4739991456022862,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49186-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700771917002003,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49189-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701953413731083,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49195-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4741201074908067,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49198-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699253845791866,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49204-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47012120005183644,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49213-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4714587820837689,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49216-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47245952620463527,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49219-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47004309035005953,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49228-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47002961213566713,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49231-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699447681563766,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49234-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699337245864328,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49240-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700060189655878,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49243-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699505722311422,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49246-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47000267648154215,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49249-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47411058208929063,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49261-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47142465942367606,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49267-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4742393396793141,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49270-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4714543407526181,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49273-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700363512594442,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49276-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47003973441532687,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49279-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47132776374336927,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49282-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47021260833044015,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49285-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47004366941560244,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49288-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47410931982348464,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49294-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47009303987925954,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49297-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700753310481115,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49300-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699347632911987,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49309-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47417323878281387,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49312-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46992080164494376,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49315-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4738818197265651,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49327-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740989178320145,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49333-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46989962456170414,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49339-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47404524404493853,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49342-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47005889462060146,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49345-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702227193058342,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49348-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740318437834186,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49351-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47422090726419014,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49354-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701533036046392,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49357-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47395055352700804,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49360-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47019836425593076,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49363-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701328943800915,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49366-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47008808962422866,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49369-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701397480681487,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49375-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702331542560692,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49381-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.470114751681172,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49384-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699699065977154,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49387-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4739936216595754,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49396-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47000230878310506,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49402-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47409882431612244,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49405-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47017365463022187,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49408-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701986535619173,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49414-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47012443580531194,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49420-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47003777259474216,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49426-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.470125478366396,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49429-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47000420633482926,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49435-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702693512541941,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49438-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699683173288929,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49441-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47405014518264027,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49450-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4739036019609959,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49456-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.470209264543414,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49459-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47421697379917255,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49471-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47412939332984905,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49474-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46989983846695216,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49480-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47397793252741693,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49483-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47400293226066664,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49486-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 2.928640738505904,
+                        "windows_seen": 5,
+                        "packet_count": 17,
+                        "dst_ip": "46.38.234.156",
+                        "reason": "Sustained communication across 5 windows and Sufficient packet volume (17)"
+                    },
+                    "flow_id": "192.168.1.112:49488-46.38.234.156:4743-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4698792220347971,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49492-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47401678631664845,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49498-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4741096329612566,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49501-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702336118185175,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49504-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47391627516429347,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49510-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701439317478217,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49525-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4738621030804805,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49528-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4742111228627061,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49531-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47399744402361926,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49534-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702474771925036,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49537-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699648046102998,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49540-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47419593370539104,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "81.95.126.146",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49544-81.95.126.146:4431-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702285711186172,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49546-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.471590195052762,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49558-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700991927260502,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49564-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46997210096218495,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49567-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702066742786444,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49570-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 2.931616772173744,
+                        "windows_seen": 5,
+                        "packet_count": 17,
+                        "dst_ip": "46.38.234.156",
+                        "reason": "Sustained communication across 5 windows and Sufficient packet volume (17)"
+                    },
+                    "flow_id": "192.168.1.112:49572-46.38.234.156:4743-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699901793081636,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49579-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4741864725852585,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49585-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47412483541076744,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49591-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701963519372028,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49594-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47139510640309223,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49600-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47014686506872183,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49603-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740281759307288,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49606-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46994945015985445,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49609-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.470149835163899,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49615-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740556705858611,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49633-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4739163609839253,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49636-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4742251371123324,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49645-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47013364266895286,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49651-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47005592992483025,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49654-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47407796377709477,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49657-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46895301831707314,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49660-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.470030865610535,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49669-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701639383028096,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49672-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.474156298956263,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49678-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47001618491081093,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49681-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46991522423652005,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49690-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701273613978265,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49693-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699425354025797,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49696-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.470086549148031,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "81.95.126.146",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49715-81.95.126.146:4431-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699608625013924,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49726-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47030659965511556,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49732-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4737847621397795,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49735-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702186878856129,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49738-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700606149898921,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49741-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47271361556912206,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49744-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700540441916428,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49747-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4739930388473711,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49753-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47006047816229535,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49756-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701118231659812,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49759-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701253989564328,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49762-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700779517870393,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49771-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47145721428182685,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49783-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700044108636661,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49786-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46971384586817644,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49789-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4741763146951389,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49792-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4713208396990168,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49801-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700717239085378,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49807-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4703812099916951,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49813-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701192509072512,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49822-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701581504557418,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49825-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4698681816178928,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49834-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47002583793488745,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49840-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701044992879291,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49843-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4742013740340157,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49846-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4741104479193912,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49852-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701854872599396,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49855-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702443663790028,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49864-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4716575359660178,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49876-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47405277950668867,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49879-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700535151814519,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49885-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701624283650159,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49888-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700617345525074,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49897-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700673584553393,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49900-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47405310281925817,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49903-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46995276907729655,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49906-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46998481301752776,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49915-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4741098320956589,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49918-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47008769571482817,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49936-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47364049014531906,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49939-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47001486548096283,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49945-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4703099628652534,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49948-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47019558997615035,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49951-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47417156243919045,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49957-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46999710040143217,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49960-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700927841912071,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49963-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699642722356869,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49969-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47013272010265694,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49975-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47398541107441494,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49981-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740691854812732,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49984-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47011992795398655,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49987-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702076648313369,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49990-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4699505770730963,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49993-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47024678750710786,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:49999-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740088025261272,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50002-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47004870762379025,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50008-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701749724303514,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50011-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47014016670303876,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50014-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47407379683658335,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50023-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.471549920985883,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50026-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47017732326275025,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50029-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47378393882790004,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50032-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47007895175848413,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50038-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4739009038347487,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50047-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740020848738968,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50050-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46999848132479155,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50056-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47389222236912515,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50059-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701605352797754,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50062-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701375026916219,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50068-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4739887395071835,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50074-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700051779467549,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50077-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740495546600483,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50083-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.46984635482387577,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50086-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4703513837657636,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50089-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4740948143651166,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50095-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47419392725707715,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50098-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47420783527478,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50101-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702410737401548,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50104-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47024628322143386,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50107-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4702839972658145,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50110-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4701351578617876,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50122-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700700086714356,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50128-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47021785838758406,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50131-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47000843415847116,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50134-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4698939427017941,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "81.95.126.146",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50138-81.95.126.146:4431-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.4700617144037172,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50140-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47402100158499777,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50143-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47008548867395056,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50146-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 0.47011015437093595,
+                        "windows_seen": 6,
+                        "packet_count": 3,
+                        "dst_ip": "198.100.127.43",
+                        "reason": "Highly regular inter-arrival timing (CV=0.47) and Sustained communication across 6 windows"
+                    },
+                    "flow_id": "192.168.1.112:50152-198.100.127.43:443-TCP",
+                    "severity": "HIGH",
+                    "confidence": 0.6666666666666666
+                },
+                {
+                    "threat_type": "C2_BEACONING",
+                    "count": 1,
+                    "evidence": {
+                        "periodicity_cv": 2.90827307012638,
+                        "windows_seen": 5,
+                        "packet_count": 17,
+                        "dst_ip": "46.38.234.156",
+                        "reason": "Sustained communication across 5 windows and Sufficient packet volume (17)"
+                    },
+                    "flow_id": "192.168.1.112:50157-46.38.234.156:4743-TCP",
                     "severity": "HIGH",
                     "confidence": 0.6666666666666666
                 }
             ],
             "status": "DETECTED",
-            "elapsed_seconds": 6.31,
-            "packets_per_sec": 1585.3
+            "elapsed_seconds": 4.56,
+            "packets_per_sec": 5480.78
         }
     ]
 }

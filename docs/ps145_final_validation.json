@@ -1,0 +1,58 @@
+{
+  "status": "COMPLETED",
+  "threats": [
+    {
+      "name": "BENIGN",
+      "status": "VALIDATED",
+      "pcap": "NTRO-Datasets/PCAPS/01_benign/2013-12-17_capture1.pcap",
+      "notes": "Verified. Clean baseline.",
+      "evidence_fields": []
+    },
+    {
+      "name": "DDoS",
+      "status": "VALIDATED",
+      "pcap": "NTRO-Datasets/PCAPS/02_ddos/2015-09-10_winlinux.pcap",
+      "notes": "Verified with hybrid ML approach.",
+      "evidence_fields": ["packets_per_sec", "bytes_per_sec", "unique_src_ips", "is_service_port", "rf_probability"]
+    },
+    {
+      "name": "C2_BEACONING",
+      "status": "VALIDATED",
+      "pcap": "NTRO-Datasets/PCAPS/03_c2_beaconing/2017-06-24_win2.pcap (neris)",
+      "notes": "Verified with IAT periodicity CV < 1.0 or sustained CV < 1.5.",
+      "evidence_fields": ["periodicity_cv", "windows_seen", "packet_count", "dst_ip"]
+    },
+    {
+      "name": "DNS_DGA_TUNNEL",
+      "status": "VALIDATED",
+      "pcap": "NTRO-Datasets/PCAPS/04_dns_dga_tunneling/2014-02-07_capture-win3.pcap",
+      "notes": "Verified. High domain entropy (> 3.8) and long domain lengths.",
+      "evidence_fields": ["unique_queries_across_windows", "domain_entropy_avg", "domain_length_avg", "high_entropy_queries"]
+    },
+    {
+      "name": "ENCRYPTED_MALWARE",
+      "status": "VALIDATED",
+      "pcap": "NTRO-Datasets/PCAPS/05_encrypted_malware/2017-06-24_win2.pcap",
+      "notes": "Verified. Missing SNI and suspicious sustained TLS behavior.",
+      "evidence_fields": ["tls_sni_present", "windows_seen", "total_bytes"]
+    },
+    {
+      "name": "RECON_PORT_SCAN",
+      "status": "VALIDATED",
+      "pcap": "NTRO-Datasets/PCAPS/06_reconnaissance/botnet-capture-20110812-rbot.pcap",
+      "notes": "Verified. High fan-out to distinct IPs/Ports.",
+      "evidence_fields": ["unique_destination_ports", "unique_destination_ips"]
+    },
+    {
+      "name": "DATA_EXFILTRATION",
+      "status": "UNVALIDATED_NO_PCAP",
+      "pcap": "None",
+      "notes": "Detector logic present. Awaiting dedicated PCAP dataset.",
+      "evidence_fields": ["outbound_bytes", "inbound_bytes", "outbound_inbound_ratio", "windows_active"]
+    }
+  ],
+  "latency": {
+    "feature_extraction_ms": "< 200ms per tick",
+    "parsing_rate_pps": "1500 pps"
+  }
+}

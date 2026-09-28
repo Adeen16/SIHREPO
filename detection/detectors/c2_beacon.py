@@ -7,12 +7,13 @@ class C2BeaconingDetector(BaseDetector):
     Detects Botnet C2 Beaconing using inter-arrival time (IAT) regularity,
     accumulated across multiple observation windows to avoid missing slow beacons.
     """
-    def __init__(self, min_packets: int = 10, max_cv: float = 0.5, min_duration: float = 2.0, max_history_age: float = 300.0):
+    def __init__(self, min_packets: int = 4, max_cv: float = 1.5, min_duration: float = 2.0, max_history_age: float = 300.0):
         self.min_packets = min_packets
         # Coefficient of Variation (stddev / mean). A low CV means highly regular timing.
         self.max_cv = max_cv
         self.min_duration = min_duration
         self.max_history_age = max_history_age
+
 
         # State tracking across windows
         # format: { flow_id: { "total_packets": int, "iat_count": int, "iat_mean": float, "iat_m2": float, "last_seen": float, "first_seen": float } }

@@ -1,0 +1,23 @@
+{
+    "RandomForest": {
+        "accuracy": 1.0,
+        "classification_report": {
+            "0": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 258.0
+            },
+            "1": {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 12442.0
+            }
+        },
+        "confusion_matrix": [
+            [258, 0],
+            [0, 12442]
+        ]
+    }
+}

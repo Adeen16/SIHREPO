@@ -16,14 +16,6 @@ class DDoSDetector(BaseDetector):
         flow_id = flow_state.flow_id
 
         try:
-            vector = self.bridge.convert(phase6_features)
-            inference_output = self.inference_engine.predict(vector)
-
-            predicted_class = inference_output.get("predicted_class", "")
-            confidence = inference_output.get("confidence", 0.0)
-
-            is_ml_ddos = bool(predicted_class and "DDOS" in predicted_class)
-
             # Volumetric calculations
             fwd_pps = phase6_features.get("fwd_pkts_per_sec", 0)
             rev_pps = phase6_features.get("rev_pkts_per_sec", 0)
@@ -34,17 +26,32 @@ class DDoSDetector(BaseDetector):
             total_bps = fwd_bps + rev_bps
 
             # Flow concentration to destination IP in this window
-            flows_to_dst = 0
-            packets_to_dst = 0
-            unique_src_ips = set()
+            # Cache this per window to avoid O(N^2) complexity on large windows
+            if not hasattr(self, "_last_window_end") or self._last_window_end != window_snapshot.window_end:
+                self._last_window_end = window_snapshot.window_end
+                self._dst_stats = {}
 
-            for active_flow in window_snapshot.flows.values():
-                if active_flow.dst_ip == flow_state.dst_ip:
-                    flows_to_dst += 1
-                    packets_to_dst += active_flow.packet_count
-                    unique_src_ips.add(active_flow.src_ip)
+            dst_ip = flow_state.dst_ip
+            if dst_ip not in self._dst_stats:
+                f_to_dst = 0
+                p_to_dst = 0
+                u_src_ips = set()
+                for active_flow in window_snapshot.flows.values():
+                    if active_flow.dst_ip == dst_ip:
+                        f_to_dst += 1
+                        p_to_dst += active_flow.packet_count
+                        u_src_ips.add(active_flow.src_ip)
+                self._dst_stats[dst_ip] = {
+                    "flows_to_dst": f_to_dst,
+                    "packets_to_dst": p_to_dst,
+                    "unique_src_count": len(u_src_ips),
+                    "ml_predicted": None
+                }
 
-            unique_src_count = len(unique_src_ips)
+            dst_info = self._dst_stats[dst_ip]
+            flows_to_dst = dst_info["flows_to_dst"]
+            packets_to_dst = dst_info["packets_to_dst"]
+            unique_src_count = dst_info["unique_src_count"]
 
             # P2P exclusion: DDoS typically targets well-known server ports.
             # BitTorrent or other P2P apps often use ephemeral high ports (> 10000).
@@ -65,9 +72,6 @@ class DDoSDetector(BaseDetector):
             signals = 0
             reasons = []
 
-            if is_ml_ddos:
-                signals += 1
-                reasons.append("ML model predicted DDoS")
             if is_high_volume:
                 signals += 1
                 reasons.append(f"High traffic volume ({total_pps:.2f} pkts/sec)")
@@ -77,6 +81,20 @@ class DDoSDetector(BaseDetector):
             if is_burst:
                 signals += 2 # Strong signal
                 reasons.append(f"Distributed burst traffic ({packets_to_dst} total packets to {flow_state.dst_ip})")
+
+            # Only run ML inference if we have enough volumetric signals to potentially trigger an alert (needs >=2 before ML, since ML gives +1)
+            is_ml_ddos = False
+            if signals >= 2:
+                if dst_info["ml_predicted"] is None:
+                    vector = self.bridge.convert(phase6_features)
+                    inference_output = self.inference_engine.predict(vector)
+                    predicted_class = inference_output.get("predicted_class", "")
+                    dst_info["ml_predicted"] = bool(predicted_class in ["DDOS", "1", 1] or (isinstance(predicted_class, str) and "DDOS" in predicted_class.upper()))
+                
+                is_ml_ddos = dst_info["ml_predicted"]
+                if is_ml_ddos:
+                    signals += 1
+                    reasons.append("ML model predicted DDoS")
 
             # Must have at least 3 points of evidence to alert (e.g. concentrated + ML, or concentrated + burst)
             if signals >= 3:

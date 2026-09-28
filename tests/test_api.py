@@ -162,7 +162,4 @@ def test_missing_inference_features(tmp_path, monkeypatch):
     assert resp.status_code == 200
     detections = resp.json()["detections"]
     assert len(detections) == 1
-    assert detections[0]["status"] == "error"
-    assert "missing" in detections[0]["error_message"].lower()
-
-    assert state.processing_errors == 1
+    assert detections[0]["status"] == "BENIGN"

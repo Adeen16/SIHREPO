@@ -1,0 +1,147 @@
+{
+  "features": [
+    {
+      "name": "flow_duration",
+      "datatype": "float",
+      "calculation": "Duration of flow in this window (source: flow.duration).",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Flow timestamps",
+      "expected_range": ">= 0.0",
+      "missing_value_behavior": "0.0 for single packets",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Flow duration in seconds"
+    },
+    {
+      "name": "fwd_packet_count",
+      "datatype": "float",
+      "calculation": "Number of forward packets observed in the window.",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Packet counts from source to destination",
+      "expected_range": ">= 1.0",
+      "missing_value_behavior": "Filled with 0.0 if not present",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Forward packet count"
+    },
+    {
+      "name": "rev_packet_count",
+      "datatype": "float",
+      "calculation": "Number of reverse packets observed in the window.",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Packet counts from destination to source",
+      "expected_range": ">= 0.0",
+      "missing_value_behavior": "Filled with 0.0 if not present",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Reverse packet count"
+    },
+    {
+      "name": "fwd_byte_count",
+      "datatype": "float",
+      "calculation": "Total forward bytes observed in the window.",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Packet lengths from source to destination",
+      "expected_range": ">= 0.0",
+      "missing_value_behavior": "Filled with 0.0 if not present",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Forward byte count"
+    },
+    {
+      "name": "rev_byte_count",
+      "datatype": "float",
+      "calculation": "Total reverse bytes observed in the window.",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Packet lengths from destination to source",
+      "expected_range": ">= 0.0",
+      "missing_value_behavior": "Filled with 0.0 if not present",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Reverse byte count"
+    },
+    {
+      "name": "fwd_bytes_per_sec",
+      "datatype": "float",
+      "calculation": "fwd_byte_count / flow_duration",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Derived from volume and duration",
+      "expected_range": ">= 0.0",
+      "missing_value_behavior": "0.0 if duration is 0.0",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Forward bytes per second"
+    },
+    {
+      "name": "rev_bytes_per_sec",
+      "datatype": "float",
+      "calculation": "rev_byte_count / flow_duration",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Derived from volume and duration",
+      "expected_range": ">= 0.0",
+      "missing_value_behavior": "0.0 if duration is 0.0",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Reverse bytes per second"
+    },
+    {
+      "name": "fwd_pkts_per_sec",
+      "datatype": "float",
+      "calculation": "fwd_packet_count / flow_duration",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Derived from volume and duration",
+      "expected_range": ">= 0.0",
+      "missing_value_behavior": "0.0 if duration is 0.0",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Forward packets per second"
+    },
+    {
+      "name": "rev_pkts_per_sec",
+      "datatype": "float",
+      "calculation": "rev_packet_count / flow_duration",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Derived from volume and duration",
+      "expected_range": ">= 0.0",
+      "missing_value_behavior": "0.0 if duration is 0.0",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Reverse packets per second"
+    },
+    {
+      "name": "byte_ratio",
+      "datatype": "float",
+      "calculation": "fwd_byte_count / rev_byte_count",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Derived from byte counts",
+      "expected_range": "[0.0, 10000.0]",
+      "missing_value_behavior": "Capped at 10000.0 if rev_bytes is 0",
+      "normalization_scaling": "RobustScaler applied during training",
+      "label_definition": "Ratio of forward to reverse bytes"
+    },
+    {
+      "name": "is_unidirectional",
+      "datatype": "float",
+      "calculation": "1.0 if rev_byte_count == 0 else 0.0",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Derived from reverse bytes",
+      "expected_range": "{0.0, 1.0}",
+      "missing_value_behavior": "N/A",
+      "normalization_scaling": "None (binary indicator)",
+      "label_definition": "Flag for unidirectional flow"
+    },
+    {
+      "name": "is_tcp",
+      "datatype": "float",
+      "calculation": "1.0 if protocol == 'TCP' else 0.0",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Flow protocol",
+      "expected_range": "{0.0, 1.0}",
+      "missing_value_behavior": "0.0 if unknown",
+      "normalization_scaling": "None (binary indicator)",
+      "label_definition": "TCP protocol indicator"
+    },
+    {
+      "name": "is_udp",
+      "datatype": "float",
+      "calculation": "1.0 if protocol == 'UDP' else 0.0",
+      "time_window_scope": "Per sliding window",
+      "source_information": "Flow protocol",
+      "expected_range": "{0.0, 1.0}",
+      "missing_value_behavior": "0.0 if unknown",
+      "normalization_scaling": "None (binary indicator)",
+      "label_definition": "UDP protocol indicator"
+    }
+  ]
+}

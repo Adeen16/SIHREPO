@@ -1,0 +1,85 @@
+{
+    "executive_summary": "The system accuracy has been audited. A single overall PS145 accuracy percentage is not mathematically defensible because the PCAP datasets lack precise packet-level or window-level ground truth, and several attack regions have not yet been isolated within the massive packet captures.",
+    "ml_models": [
+        {
+            "detector": "BaselineInferenceEngine (RandomForest)",
+            "type": "ML Classification",
+            "features": 13,
+            "training_dataset": "CIC-IDS2018 (Friday-16-02-2018_TrafficForML_CICFlowMeter.csv)",
+            "metrics_random_split": {
+                "accuracy": 0.9983,
+                "precision": 0.9985,
+                "recall": 0.9981,
+                "f1_score": 0.9983,
+                "fpr": 0.0036
+            },
+            "metrics_scenario_holdout": {
+                "accuracy": 0.3883,
+                "precision": 0.1944,
+                "recall": 0.4981,
+                "f1_score": 0.2797,
+                "fpr": 0.0036,
+                "attack_recall": 0.0
+            },
+            "status": "NEEDS IMPROVEMENT"
+        }
+    ],
+    "detectors": [
+        {
+            "name": "BENIGN Pipeline",
+            "type": "Hybrid Fusion",
+            "dataset": "01_benign PCAP",
+            "ground_truth_available": true,
+            "fpr": 0.0,
+            "status": "ACCEPTABLE FOR PROTOTYPE"
+        },
+        {
+            "name": "RECON Pipeline",
+            "type": "Behavioral",
+            "dataset": "06_recon PCAP",
+            "ground_truth_available": true,
+            "tp_found": true,
+            "status": "ACCEPTABLE FOR PROTOTYPE"
+        },
+        {
+            "name": "DDoS Pipeline",
+            "type": "Hybrid (ML + Heuristic)",
+            "dataset": "02_ddos PCAP",
+            "ground_truth_available": false,
+            "status": "INSUFFICIENT DATA"
+        },
+        {
+            "name": "C2 Beaconing Pipeline",
+            "type": "Behavioral",
+            "dataset": "03_c2_beaconing PCAP",
+            "ground_truth_available": false,
+            "status": "INSUFFICIENT DATA"
+        },
+        {
+            "name": "DNS DGA Tunnel Pipeline",
+            "type": "Behavioral",
+            "dataset": "04_dns_dga_tunneling PCAP",
+            "ground_truth_available": false,
+            "status": "INSUFFICIENT DATA"
+        },
+        {
+            "name": "Encrypted Malware Pipeline",
+            "type": "Behavioral",
+            "dataset": "05_encrypted_malware PCAP",
+            "ground_truth_available": false,
+            "status": "INSUFFICIENT DATA"
+        },
+        {
+            "name": "Data Exfiltration Pipeline",
+            "type": "Behavioral",
+            "dataset": "N/A",
+            "ground_truth_available": false,
+            "status": "NOT APPLICABLE"
+        }
+    ],
+    "domain_shift": {
+        "identified": true,
+        "cause": "The Random Forest model was trained on CICFlowMeter CSV extracts, which calculate flow durations over minutes. The real-time inference engine calculates these features over 10-second sliding windows from raw PCAPs. This creates a severe mismatch in feature distribution (e.g., packets_per_sec, bytes_per_sec).",
+        "impact": "The ML model misclassifies real PCAP traffic and fails to generalize."
+    }
+}

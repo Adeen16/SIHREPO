@@ -28,7 +28,7 @@ def run_validation(category: str = None, packet_limit: int = None, start_packet:
     print("   SIH 145 PS 145 END-TO-END VALIDATION HARNESS   ")
     print("==================================================")
 
-    model_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models', 'baseline'))
+    model_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models', 'native_ddos'))
 
     validation_results = {"datasets": []}
 
