@@ -1,0 +1,98 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0f172a;
+    color: #e2e8f0;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #1e293b;
+    border-bottom: 1px solid #334155;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.status-indicator span {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.connected {
+    background-color: #10b981;
+    color: #022c22;
+}
+
+.disconnected {
+    background-color: #ef4444;
+    color: #450a0a;
+}
+
+main {
+    padding: 2rem;
+    display: grid;
+    gap: 2rem;
+}
+
+.overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #94a3b8;
+}
+
+.metric {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #38bdf8;
+}
+
+.chart-container {
+    height: 300px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid #334155;
+}
+
+th {
+    color: #94a3b8;
+}
+
+tr:hover {
+    background-color: #334155;
+}
+
+.alert-high {
+    color: #ef4444;
+    font-weight: bold;
+}
