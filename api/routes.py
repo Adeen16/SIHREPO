@@ -247,6 +247,7 @@ async def process_pcap_background(req_path: str):
         return
         
     state.is_processing = True
+    state.processing_started_at = time.time()
     try:
         await manager.broadcast({"type": "reset"})
         loop = asyncio.get_running_loop()
@@ -306,7 +307,11 @@ async def demo_pcap(request: DemoPcapRequest, background_tasks: BackgroundTasks)
         raise HTTPException(status_code=503, detail="Model orchestrator not initialized")
 
     if state.is_processing:
-        raise HTTPException(status_code=409, detail="Another file is currently being processed. Please wait.")
+        if time.time() - state.processing_started_at > 300:
+            logger.warning("Lock was stuck for > 5 minutes. Clearing stuck lock.")
+            state.is_processing = False
+        else:
+            raise HTTPException(status_code=409, detail="Another file is currently being processed. Please wait.")
 
     safe_dir = os.path.abspath(os.path.join(os.getcwd(), "NTRO-Datasets", "PCAPS"))
     safe_dir2 = os.path.abspath(os.path.join(os.getcwd(), "PS145-Test-PCAPs"))
@@ -331,7 +336,11 @@ async def upload_pcap(background_tasks: BackgroundTasks, file: UploadFile = File
         raise HTTPException(status_code=503, detail="Model orchestrator not initialized")
     
     if state.is_processing:
-        raise HTTPException(status_code=409, detail="Another file is currently being processed. Please wait.")
+        if time.time() - state.processing_started_at > 300:
+            logger.warning("Lock was stuck for > 5 minutes. Clearing stuck lock.")
+            state.is_processing = False
+        else:
+            raise HTTPException(status_code=409, detail="Another file is currently being processed. Please wait.")
     
     if not file.filename.endswith(".pcap"):
         raise HTTPException(status_code=400, detail="Only .pcap files are allowed.")
