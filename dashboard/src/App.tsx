@@ -19,6 +19,8 @@ function App() {
   const [isStarted, setIsStarted] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  // Pipeline-level error broadcast from backend (e.g. corrupt PCAP)
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const [state, setState] = useState<DashboardState>({
     metrics: null,
@@ -70,7 +72,10 @@ function App() {
               hosts: [],
               uptime: 0
             });
+            setUploadError(null); // Clear any previous error on fresh run
             startTime.current = Date.now();
+          } else if (data.type === 'error') {
+            setUploadError(data.payload?.message || 'Unknown pipeline error');
           }
         } catch (e) {
           console.error("Failed to parse websocket message", e);
@@ -226,13 +231,13 @@ function App() {
         </div>
 
         {/* CONTACT LOG (Right Rail) */}
-        <section className="w-full lg:w-96 border border-grid-line bg-bg-panel flex flex-col shrink-0">
-          <div className="border-b border-grid-line px-4 py-2 font-mono text-xs uppercase text-accent-cyan tracking-widest flex justify-between shrink-0">
+        <section className={`w-full lg:w-96 border bg-bg-panel flex flex-col shrink-0 ${uploadError ? 'border-accent-red' : 'border-grid-line'}`}>
+          <div className={`border-b px-4 py-2 font-mono text-xs uppercase tracking-widest flex justify-between shrink-0 ${uploadError ? 'border-accent-red text-accent-red' : 'border-grid-line text-accent-cyan'}`}>
             <span>Contact Log</span>
             <span className="text-grid-line">{state.alerts.length} LOGGED</span>
           </div>
           <div className="flex-1 overflow-y-auto min-h-0">
-            <ContactLog alerts={state.alerts} />
+            <ContactLog alerts={state.alerts} uploadError={uploadError} />
           </div>
         </section>
 

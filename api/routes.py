@@ -261,6 +261,15 @@ async def process_pcap_background(req_path: str):
     except Exception as e:
         import traceback
         logger.error(f"Demo processing failure: {e}\n{traceback.format_exc()}")
+        # Broadcast error to frontend so it shows an explicit failure state,
+        # not silent "0 PKT/S / No contacts logged"
+        try:
+            await manager.broadcast({
+                "type": "error",
+                "payload": {"message": f"Failed to process file: {e}"}
+            })
+        except Exception:
+            pass  # Don't mask the original error if broadcast itself fails
     finally:
         logger.info(f"PHASE1_DEBUG: Finished background PCAP processing. Total packets read: {state.packets_processed}")
 

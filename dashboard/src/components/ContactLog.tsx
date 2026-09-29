@@ -4,10 +4,28 @@ import type { Alert } from '../types';
 
 interface ContactLogProps {
   alerts: Alert[];
+  uploadError: string | null;
 }
 
-export const ContactLog: React.FC<ContactLogProps> = ({ alerts }) => {
+export const ContactLog: React.FC<ContactLogProps> = ({ alerts, uploadError }) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Show pipeline error state — distinct from "no threats found"
+  if (uploadError) {
+    return (
+      <div className="h-full flex flex-col items-start justify-start p-4 gap-3">
+        <div className="w-full bg-accent-red/10 border border-accent-red p-4 font-mono">
+          <div className="text-accent-red text-xs uppercase tracking-widest font-semibold mb-2">
+            ⚠ UPLOAD FAILED
+          </div>
+          <div className="text-accent-red text-xs break-words">{uploadError}</div>
+        </div>
+        <p className="font-mono text-xs text-grid-line">
+          The file could not be processed. Please upload a valid .pcap capture file.
+        </p>
+      </div>
+    );
+  }
 
   if (alerts.length === 0) {
     return (
