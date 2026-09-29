@@ -134,61 +134,7 @@ from pydantic import BaseModel
 import os
 from ingestion.pcap_reader import PCAPIngestor
 
-class DemoPcapRequest(BaseModel):
-    pcap_path: str
 
-@router.post("/demo/pcap", response_model=DetectionResponse)
-def demo_pcap(request: DemoPcapRequest):
-    """
-    Safely runs a local PCAP file through the pipeline for demonstration.
-    """
-    if not state.orchestrator:
-        raise HTTPException(status_code=503, detail="Model orchestrator not initialized")
-
-    safe_dir = os.path.abspath(os.path.join(os.getcwd(), "NTRO-Datasets", "PCAPS"))
-    safe_dir2 = os.path.abspath(os.path.join(os.getcwd(), "PS145-Test-PCAPs"))
-
-    req_path = os.path.abspath(request.pcap_path)
-
-    if not (req_path.startswith(safe_dir) or req_path.startswith(safe_dir2)) or not os.path.exists(req_path):
-        raise HTTPException(status_code=400, detail="Invalid or unsafe PCAP path. Must be within NTRO-Datasets/PCAPS or PS145-Test-PCAPs.")
-
-    try:
-        ingestor = PCAPIngestor(req_path)
-        all_results = []
-        for packet in ingestor:
-            state.packets_processed += 1
-            results = state.orchestrator.process_packet(packet)
-            if results:
-                state.windows_completed += 1
-                for res in results:
-                    if res.status != "error":
-                        state.detections_generated += 1
-                    else:
-                        state.processing_errors += 1
-
-                    all_results.append(
-                        DetectionResponseItem(
-                            flow_id=res.flow_id,
-                            timestamp=res.timestamp,
-                            status=res.status,
-                            threat_type=res.threat_type,
-                            severity=res.severity,
-                            confidence=res.confidence,
-                            score=res.score,
-                            detector_name=res.detector_name,
-                            evidence=res.evidence,
-                            error_message=res.error_message
-                        )
-                    )
-
-        return DetectionResponse(
-            message=f"Demo PCAP processed. {len(all_results)} detections generated.",
-            detections=all_results
-        )
-    except Exception as e:
-        logger.error(f"Demo processing failure: {e}")
-        raise HTTPException(status_code=500, detail=f"Demo processing failure: {e}")
 
 
 from pydantic import BaseModel
@@ -236,6 +182,9 @@ async def process_pcap_background(req_path: str):
             packet_len = packet.length if hasattr(packet, 'length') else 64
             
             results = state.orchestrator.process_packet(packet)
+            
+            if results:
+                logger.info(f"PHASE1_DEBUG: flow results generated! count={len(results)}")
             
             # Artificial slight delay to simulate real-time stream if processing is too fast
             await asyncio.sleep(0.001)
@@ -287,6 +236,7 @@ async def process_pcap_background(req_path: str):
             if results:
                 state.windows_completed += 1
                 for res in results:
+                    logger.info(f"PHASE1_DEBUG: result status={res.status} threat={res.threat_type}")
                     if res.status != "error":
                         state.detections_generated += 1
                         
@@ -300,6 +250,7 @@ async def process_pcap_background(req_path: str):
                                 "evidence": res.evidence,
                                 "severity": res.severity
                             }
+                            logger.info(f"PHASE1_DEBUG: Broadcasting alert: {alert_payload}")
                             await manager.broadcast({
                                 "type": "alert",
                                 "payload": alert_payload
@@ -308,7 +259,8 @@ async def process_pcap_background(req_path: str):
                         state.processing_errors += 1
                         
     except Exception as e:
-        logger.error(f"Demo processing failure: {e}")
+        import traceback
+        logger.error(f"Demo processing failure: {e}\n{traceback.format_exc()}")
     finally:
         logger.info(f"PHASE1_DEBUG: Finished background PCAP processing. Total packets read: {state.packets_processed}")
 
