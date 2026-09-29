@@ -79,3 +79,4 @@ class StatusResponse(BaseModel):
     windows_completed: int
     detections_generated: int
     processing_errors: int
+    is_processing: bool = False

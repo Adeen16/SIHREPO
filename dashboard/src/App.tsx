@@ -173,7 +173,7 @@ function App() {
               disabled={isUploading}
               className={`mt-4 bg-accent-amber text-[#12130F] font-mono font-semibold uppercase tracking-widest py-3 transition-opacity ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-opacity-90'}`}
             >
-              {isUploading ? 'UPLOADING...' : 'INITIALIZE PIPELINE'}
+              {isUploading ? 'PROCESSING...' : 'INITIALIZE PIPELINE'}
             </button>
           </form>
         </div>
