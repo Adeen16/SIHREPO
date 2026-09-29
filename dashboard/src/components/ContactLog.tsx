@@ -155,9 +155,10 @@ export const ContactLog: React.FC<ContactLogProps> = ({ alerts, uploadError }) =
                 )}
               </div>
             </div>
-          </li>
-        );
-      })}
-    </ul>
-  );
+          </div>
+        </li>
+      );
+    })}
+  </ul>
+);
 };

@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { format } from 'date-fns';
 import { Waterfall } from './components/Waterfall';
 import { ContactLog } from './components/ContactLog';
 import { BearingBoard } from './components/BearingBoard';
