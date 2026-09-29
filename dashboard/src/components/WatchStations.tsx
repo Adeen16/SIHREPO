@@ -104,7 +104,7 @@ export const WatchStations: React.FC<WatchStationsProps> = ({ alerts }) => {
             
             <div className="text-center font-mono text-xs mt-2 relative z-10">
               <span className={isActive ? 'text-accent-red' : 'text-accent-cyan'}>
-                {isActive ? 'ACTIVE' : 'QUIET'}
+                {isActive ? `${(level * 100).toFixed(0)}%` : 'QUIET'}
               </span>
             </div>
           </div>

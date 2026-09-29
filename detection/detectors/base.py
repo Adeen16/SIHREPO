@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Optional, Dict, Any
+from dataclasses import dataclass, field
+from typing import Optional, Dict, Any, List
 from api.schemas import DetectionResponseItem
 
 @dataclass
@@ -16,6 +16,9 @@ class DetectionResult:
     validation_source: str = "REAL_PCAP"
     evidence: Optional[Dict[str, Any]] = None
     error_message: Optional[str] = None
+    # Evidence panel fields — set by FusionEngine
+    all_detector_results: List[Dict[str, Any]] = field(default_factory=list)
+    fusion_reason: Optional[str] = None
 
 class BaseDetector:
     """Base class for all threat detectors."""

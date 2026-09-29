@@ -4,6 +4,7 @@ import { Waterfall } from './components/Waterfall';
 import { ContactLog } from './components/ContactLog';
 import { BearingBoard } from './components/BearingBoard';
 import { WatchStations } from './components/WatchStations';
+import { RoadmapSidebar } from './components/RoadmapSidebar';
 import type { Alert, WindowMetrics, FlowHost } from './types';
 
 
@@ -204,7 +205,12 @@ function App() {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0">
+      <div className="flex-1 flex flex-row min-h-0 gap-0">
+        {/* ROADMAP SIDEBAR */}
+        <RoadmapSidebar />
+
+        {/* CENTER + RIGHT */}
+        <div className="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 min-w-0 p-0 lg:pl-4">
         
         <div className="flex-1 flex flex-col gap-6 min-w-0">
           {/* WATERFALL (Top Left) */}
@@ -241,7 +247,8 @@ function App() {
           </div>
         </section>
 
-      </div>
+        </div>{/* end CENTER + RIGHT */}
+      </div>{/* end MAIN CONTENT AREA */}
 
       {/* WATCH STATIONS (Bottom Strip) */}
       <section className="mt-6 border-t border-grid-line pt-6 shrink-0">

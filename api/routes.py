@@ -248,7 +248,9 @@ async def process_pcap_background(req_path: str):
                                 "threat_class": res.threat_type,
                                 "confidence": res.confidence,
                                 "evidence": res.evidence,
-                                "severity": res.severity
+                                "severity": res.severity,
+                                "fusion_reason": res.fusion_reason,
+                                "all_detector_results": res.all_detector_results,
                             }
                             logger.info(f"PHASE1_DEBUG: Broadcasting alert: {alert_payload}")
                             await manager.broadcast({

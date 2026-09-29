@@ -6,6 +6,14 @@ export interface Alert {
   evidence: Record<string, any>;
   severity?: string;
   receivedAt?: number;
+  fusion_reason?: string;
+  all_detector_results?: Array<{
+    detector: string;
+    status: string;
+    threat_type: string | null;
+    confidence: number | null;
+    evidence: Record<string, any>;
+  }>;
 }
 
 export interface WindowMetrics {
