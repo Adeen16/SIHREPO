@@ -50,7 +50,8 @@ def get_status():
         packets_processed=state.packets_processed,
         windows_completed=state.windows_completed,
         detections_generated=state.detections_generated,
-        processing_errors=state.processing_errors
+        processing_errors=state.processing_errors,
+        is_processing=state.is_processing
     )
 
 @router.post("/detect", response_model=DetectionResponse)
@@ -159,7 +160,12 @@ async def websocket_endpoint(websocket: WebSocket):
 class DemoPcapRequest(BaseModel):
     pcap_path: str
 
-async def process_pcap_background(req_path: str):
+def pcap_worker_sync(req_path: str, queue: asyncio.Queue, loop: asyncio.AbstractEventLoop):
+    from api.state import state
+    import time
+    from ingestion.pcap_reader import PCAPIngestor
+    import traceback
+    
     logger.info(f"PHASE1_DEBUG: Starting background PCAP processing. Actual file path: {req_path}")
     try:
         state.orchestrator.reset()
@@ -168,79 +174,111 @@ async def process_pcap_background(req_path: str):
         state.detections_generated = 0
         state.processing_errors = 0
         
-        # Reset dashboard state on the client side
-        await manager.broadcast({"type": "reset"})
-        
         ingestor = PCAPIngestor(req_path)
         last_metrics_time = time.time()
         last_packet_count = 0
-        last_byte_count = 0
         
         for packet in ingestor:
+            if not state.is_processing:
+                break
+                
             state.packets_processed += 1
-            # Very rough byte estimation if packet length is not directly on state
-            packet_len = packet.length if hasattr(packet, 'length') else 64
-            
             results = state.orchestrator.process_packet(packet)
             
             if results:
                 logger.info(f"PHASE1_DEBUG: flow results generated! count={len(results)}")
             
-            # Artificial slight delay to simulate real-time stream if processing is too fast
-            await asyncio.sleep(0.001)
-
             current_time = time.time()
             time_diff = current_time - last_metrics_time
-            if time_diff > 1.0: # Emit metrics every second
-                
+            snapshot_data = None
+            if time_diff > 1.0:
                 pps = (state.packets_processed - last_packet_count) / time_diff
-                
                 last_metrics_time = current_time
                 last_packet_count = state.packets_processed
                 
-                # Extract hosts from active flows in current snapshot
                 hosts_map = {}
                 snapshot = state.orchestrator.window_manager.get_current_snapshot()
                 for flow_id, flow in snapshot.flows.items():
-                    # Let's grab the src_ip and dst_ip from the flow object
-                    if hasattr(flow, 'src_ip') and hasattr(flow, 'dst_ip'):
+                    if hasattr(flow, "src_ip") and hasattr(flow, "dst_ip"):
                         src = flow.src_ip
                         dst = flow.dst_ip
-                        
                         if src not in hosts_map:
                             hosts_map[src] = {"ip": src, "protocol": str(flow.protocol), "last_seen": current_time * 1000, "volume": 0}
                         hosts_map[src]["volume"] += flow.fwd_byte_count + flow.fwd_packet_count
-
                         if dst not in hosts_map:
                             hosts_map[dst] = {"ip": dst, "protocol": str(flow.protocol), "last_seen": current_time * 1000, "volume": 0}
                         hosts_map[dst]["volume"] += flow.rev_byte_count + flow.rev_packet_count
                 
-                hosts_list = list(hosts_map.values())[:30] # Limit to top 30 for UI performance
-
-                await manager.broadcast({
-                    "type": "metrics",
-                    "payload": {
+                hosts_list = list(hosts_map.values())[:30]
+                snapshot_data = {
+                    "metrics": {
                         "timestamp": current_time,
                         "packets_per_second": pps,
-                        "bytes_per_second": pps * 512, # Rough estimate
+                        "bytes_per_second": pps * 512,
                         "flows_per_second": len(hosts_list),
                         "active_flows": len(snapshot.flows)
-                    }
-                })
+                    },
+                    "hosts": hosts_list
+                }
                 
-                await manager.broadcast({
-                    "type": "hosts",
-                    "payload": hosts_list
-                })
+            if results or snapshot_data:
+                loop.call_soon_threadsafe(queue.put_nowait, {"results": results, "snapshot": snapshot_data})
+                
+            time.sleep(0.001)
+            
+        loop.call_soon_threadsafe(queue.put_nowait, {"done": True, "error": None})
+    except Exception as e:
+        import traceback
+        try:
+            loop.call_soon_threadsafe(queue.put_nowait, {"done": True, "error": str(e)})
+        except Exception:
+            pass
+        try:
+            logger.error(f"Demo processing failure: {e}\n{traceback.format_exc()}")
+        except Exception:
+            print(f"Fallback print for error: {e}")
+    finally:
+        logger.info(f"PHASE1_DEBUG: Finished background PCAP processing. Total packets read: {state.packets_processed}")
 
+
+async def process_pcap_background(req_path: str):
+    if state.is_processing:
+        logger.warning("Attempted to start processing while another is active.")
+        return
+        
+    state.is_processing = True
+    try:
+        await manager.broadcast({"type": "reset"})
+        loop = asyncio.get_running_loop()
+        queue = asyncio.Queue()
+        
+        future = asyncio.create_task(asyncio.to_thread(pcap_worker_sync, req_path, queue, loop))
+        
+        while True:
+            item = await queue.get()
+            if item.get("done"):
+                if item.get("error"):
+                    try:
+                        await manager.broadcast({
+                            "type": "error",
+                            "payload": {"message": f"Failed to process file: {item["error"]}"}
+                        })
+                    except Exception:
+                        pass
+                break
+                
+            results = item.get("results")
+            snapshot = item.get("snapshot")
+            
+            if snapshot:
+                await manager.broadcast({"type": "metrics", "payload": snapshot["metrics"]})
+                await manager.broadcast({"type": "hosts", "payload": snapshot["hosts"]})
+                
             if results:
                 state.windows_completed += 1
                 for res in results:
-                    logger.info(f"PHASE1_DEBUG: result status={res.status} threat={res.threat_type}")
                     if res.status != "error":
                         state.detections_generated += 1
-                        
-                        # Only broadcast actual threats for alerts
                         if res.threat_type and res.threat_type != "BENIGN":
                             alert_payload = {
                                 "flow_id": res.flow_id,
@@ -253,36 +291,22 @@ async def process_pcap_background(req_path: str):
                                 "all_detector_results": res.all_detector_results,
                             }
                             logger.info(f"PHASE1_DEBUG: Broadcasting alert: {alert_payload}")
-                            await manager.broadcast({
-                                "type": "alert",
-                                "payload": alert_payload
-                            })
+                            await manager.broadcast({"type": "alert", "payload": alert_payload})
                     else:
                         state.processing_errors += 1
                         
-    except Exception as e:
-        import traceback
-        logger.error(f"Demo processing failure: {e}\n{traceback.format_exc()}")
-        # Broadcast error to frontend so it shows an explicit failure state,
-        # not silent "0 PKT/S / No contacts logged"
-        try:
-            await manager.broadcast({
-                "type": "error",
-                "payload": {"message": f"Failed to process file: {e}"}
-            })
-        except Exception:
-            pass  # Don't mask the original error if broadcast itself fails
+        await future
     finally:
-        logger.info(f"PHASE1_DEBUG: Finished background PCAP processing. Total packets read: {state.packets_processed}")
+        state.is_processing = False
 
 
 @router.post("/demo/pcap", response_model=DetectionResponse)
 async def demo_pcap(request: DemoPcapRequest, background_tasks: BackgroundTasks):
-    """
-    Safely runs a local PCAP file through the pipeline in the background and streams via WebSocket.
-    """
     if not state.orchestrator:
         raise HTTPException(status_code=503, detail="Model orchestrator not initialized")
+
+    if state.is_processing:
+        raise HTTPException(status_code=409, detail="Another file is currently being processed. Please wait.")
 
     safe_dir = os.path.abspath(os.path.join(os.getcwd(), "NTRO-Datasets", "PCAPS"))
     safe_dir2 = os.path.abspath(os.path.join(os.getcwd(), "PS145-Test-PCAPs"))
@@ -293,7 +317,6 @@ async def demo_pcap(request: DemoPcapRequest, background_tasks: BackgroundTasks)
     if not (req_path.lower().startswith(safe_dir.lower()) or req_path.lower().startswith(safe_dir2.lower()) or req_path.lower().startswith(safe_dir3.lower())) or not os.path.exists(req_path):
         raise HTTPException(status_code=400, detail="Invalid or unsafe PCAP path.")
 
-    # Start background processing
     background_tasks.add_task(process_pcap_background, req_path)
 
     return DetectionResponse(
@@ -301,15 +324,16 @@ async def demo_pcap(request: DemoPcapRequest, background_tasks: BackgroundTasks)
         detections=[]
     )
 
+
 @router.post("/demo/upload_pcap", response_model=DetectionResponse)
 async def upload_pcap(background_tasks: BackgroundTasks, file: UploadFile = File(...)):
-    """
-    Uploads a PCAP file, saves it temporarily, and runs it through the pipeline in the background.
-    """
     if not state.orchestrator:
         raise HTTPException(status_code=503, detail="Model orchestrator not initialized")
     
-    if not file.filename.endswith('.pcap'):
+    if state.is_processing:
+        raise HTTPException(status_code=409, detail="Another file is currently being processed. Please wait.")
+    
+    if not file.filename.endswith(".pcap"):
         raise HTTPException(status_code=400, detail="Only .pcap files are allowed.")
     
     temp_dir = os.path.abspath(os.path.join(os.getcwd(), "tests", "fixtures"))
@@ -318,6 +342,7 @@ async def upload_pcap(background_tasks: BackgroundTasks, file: UploadFile = File
     
     try:
         with open(file_path, "wb") as buffer:
+            import shutil
             shutil.copyfileobj(file.file, buffer)
     except Exception as e:
         logger.error(f"Failed to save uploaded file: {e}")
@@ -325,7 +350,6 @@ async def upload_pcap(background_tasks: BackgroundTasks, file: UploadFile = File
     finally:
         file.file.close()
 
-    # Start background processing
     background_tasks.add_task(process_pcap_background, file_path)
 
     return DetectionResponse(
