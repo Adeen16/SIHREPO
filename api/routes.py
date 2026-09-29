@@ -168,6 +168,7 @@ def pcap_worker_sync(req_path: str, queue: asyncio.Queue, loop: asyncio.Abstract
     
     logger.info(f"PHASE1_DEBUG: Starting background PCAP processing. Actual file path: {req_path}")
     try:
+        local_started_at = state.processing_started_at
         state.orchestrator.reset()
         state.packets_processed = 0
         state.windows_completed = 0
@@ -179,7 +180,7 @@ def pcap_worker_sync(req_path: str, queue: asyncio.Queue, loop: asyncio.Abstract
         last_packet_count = 0
         
         for packet in ingestor:
-            if not state.is_processing:
+            if not state.is_processing or state.processing_started_at != local_started_at:
                 break
                 
             state.packets_processed += 1
@@ -247,7 +248,8 @@ async def process_pcap_background(req_path: str):
         return
         
     state.is_processing = True
-    state.processing_started_at = time.time()
+    local_started_at = time.time()
+    state.processing_started_at = local_started_at
     try:
         await manager.broadcast({"type": "reset"})
         loop = asyncio.get_running_loop()
@@ -262,7 +264,7 @@ async def process_pcap_background(req_path: str):
                     try:
                         await manager.broadcast({
                             "type": "error",
-                            "payload": {"message": f"Failed to process file: {item["error"]}"}
+                            "payload": {"message": f"Failed to process file: {item['error']}"}
                         })
                     except Exception:
                         pass
@@ -298,7 +300,8 @@ async def process_pcap_background(req_path: str):
                         
         await future
     finally:
-        state.is_processing = False
+        if state.processing_started_at == local_started_at:
+            state.is_processing = False
 
 
 @router.post("/demo/pcap", response_model=DetectionResponse)
