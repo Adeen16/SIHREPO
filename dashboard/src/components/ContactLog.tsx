@@ -10,8 +10,8 @@ interface ContactLogProps {
 const STATUS_COLOR: Record<string, string> = {
   DETECTED: 'text-accent-red',
   UNVALIDATED: 'text-accent-amber',
-  NOT_DETECTED: 'text-grid-line',
-  INSUFFICIENT_DATA: 'text-grid-line',
+  NOT_DETECTED: 'text-text-paper/40',
+  INSUFFICIENT_DATA: 'text-text-paper/40',
   BENIGN: 'text-accent-cyan',
   error: 'text-accent-red/50',
 };
@@ -48,7 +48,7 @@ export const ContactLog: React.FC<ContactLogProps> = ({ alerts, uploadError }) =
   if (alerts.length === 0) {
     return (
       <div className="h-full flex items-center justify-center p-4">
-        <span className="font-mono text-sm text-grid-line uppercase tracking-widest">
+        <span className="font-mono text-sm text-text-paper/40 uppercase tracking-widest">
           No contacts logged.
         </span>
       </div>
@@ -71,7 +71,7 @@ export const ContactLog: React.FC<ContactLogProps> = ({ alerts, uploadError }) =
             key={uiId}
             className={`
               border-b border-grid-line cursor-pointer hover:bg-[#20221C] transition-colors
-              ${isHighSeverity ? 'border-l-2 border-l-accent-red' : 'border-l-2 border-l-transparent'}
+              ${isHighSeverity ? 'border-l-2 border-l-accent-red animate-alert-pulse' : 'border-l-2 border-l-transparent'}
             `}
             onClick={() => toggleExpand(uiId)}
           >
@@ -85,39 +85,42 @@ export const ContactLog: React.FC<ContactLogProps> = ({ alerts, uploadError }) =
                   {alert.flow_id}
                 </span>
               </div>
-              <div className="flex gap-3 items-center overflow-hidden">
+              <div className="flex justify-between items-center overflow-hidden">
                 <span className={`truncate min-w-0 ${isHighSeverity ? 'text-accent-red font-semibold' : 'text-accent-amber'}`} title={alert.threat_class}>
                   {alert.threat_class}
                 </span>
-                <span className="opacity-50 whitespace-nowrap shrink-0">
+                <span className="opacity-50 whitespace-nowrap shrink-0 text-right">
                   CONF: {(alert.confidence * 100).toFixed(0)}%
                 </span>
               </div>
             </div>
 
             {/* Expanded evidence panel */}
-            {isExpanded && (
-              <div className="px-3 pb-3 pt-1 text-xs font-mono text-text-paper bg-[#161814] border-t border-grid-line">
+            <div 
+              className={`grid transition-all duration-200 ease-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+            >
+              <div className="overflow-hidden">
+                <div className="px-3 pb-3 pt-1 text-xs font-mono text-text-paper bg-[#161814] border-t border-grid-line">
 
-                {/* 1. Winning evidence */}
-                <div className="mb-2">
-                  <div className="text-[9px] text-grid-line uppercase tracking-widest mb-1">Evidence</div>
-                  {alert.evidence?.reason ? (
-                    <div className="text-text-paper/80">{alert.evidence.reason}</div>
-                  ) : (
-                    <pre className="m-0 bg-transparent text-xs whitespace-pre-wrap font-inherit text-text-paper/70">
-                      {JSON.stringify(alert.evidence, null, 2)}
-                    </pre>
-                  )}
-                </div>
-
-                {/* 2. Fusion reason */}
-                {alert.fusion_reason && (
-                  <div className="mb-3 px-2 py-1 border border-accent-amber/30 bg-accent-amber/5">
-                    <span className="text-[9px] text-grid-line uppercase tracking-widest">Fusion decision: </span>
-                    <span className="text-accent-amber">{alert.fusion_reason}</span>
+                  {/* 1. Winning evidence */}
+                  <div className="mb-2">
+                    <div className="text-[9px] text-grid-line uppercase tracking-widest mb-1">Evidence</div>
+                    {alert.evidence?.reason ? (
+                      <div className="text-text-paper/80">{alert.evidence.reason}</div>
+                    ) : (
+                      <pre className="m-0 bg-transparent text-xs whitespace-pre-wrap font-inherit text-text-paper/70">
+                        {JSON.stringify(alert.evidence, null, 2)}
+                      </pre>
+                    )}
                   </div>
-                )}
+
+                  {/* 2. Fusion reason */}
+                  {alert.fusion_reason && (
+                    <div className="mb-3 px-2 py-1 bg-[#1A1A12] border border-[#20221C] border-l-2 border-l-accent-amber flex items-start gap-2">
+                      <span className="text-[9px] text-grid-line uppercase tracking-widest shrink-0 mt-0.5">Fusion:</span>
+                      <span className="text-accent-amber">{alert.fusion_reason}</span>
+                    </div>
+                  )}
 
                 {/* 3. Six-detector breakdown */}
                 {alert.all_detector_results && alert.all_detector_results.length > 0 && (
@@ -137,10 +140,11 @@ export const ContactLog: React.FC<ContactLogProps> = ({ alerts, uploadError }) =
                             <td className="py-0.5 pr-2 text-text-paper/70 text-[9px] whitespace-nowrap">
                               {dr.detector}
                             </td>
-                            <td className={`py-0.5 pr-2 text-[9px] ${STATUS_COLOR[dr.status] ?? 'text-text-paper'}`}>
+                            <td className={`py-0.5 pr-2 text-[9px] ${STATUS_COLOR[dr.status] ?? 'text-text-paper/40'} flex items-center gap-1.5`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${dr.status === 'DETECTED' ? 'bg-accent-red' : 'border border-text-paper/20'}`}></span>
                               {STATUS_LABEL[dr.status] ?? dr.status}
                             </td>
-                            <td className="py-0.5 text-right text-[9px] text-text-paper/60">
+                            <td className="py-0.5 text-right text-[9px] text-text-paper/60 font-mono">
                               {dr.confidence != null ? `${(dr.confidence * 100).toFixed(0)}%` : '—'}
                             </td>
                           </tr>
@@ -150,7 +154,7 @@ export const ContactLog: React.FC<ContactLogProps> = ({ alerts, uploadError }) =
                   </div>
                 )}
               </div>
-            )}
+            </div>
           </li>
         );
       })}

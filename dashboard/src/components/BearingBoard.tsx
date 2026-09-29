@@ -25,6 +25,7 @@ export const BearingBoard: React.FC<BearingBoardProps> = ({ hosts, alerts }) => 
 
   const hostsRef = useRef(hosts);
   const alertIpsRef = useRef(alertIps);
+  const particlesRef = useRef(new Map<string, any>());
   
   useEffect(() => {
     hostsRef.current = hosts;
@@ -81,6 +82,8 @@ export const BearingBoard: React.FC<BearingBoardProps> = ({ hosts, alerts }) => 
 
       const currentHosts = hostsRef.current;
       const currentAlertIps = alertIpsRef.current;
+      const particles = particlesRef.current;
+      const nowTime = performance.now();
 
       // Plot points
       currentHosts.forEach((host, i) => {
@@ -92,28 +95,43 @@ export const BearingBoard: React.FC<BearingBoardProps> = ({ hosts, alerts }) => 
         const angle = (Math.abs(hash) % 360) * (Math.PI / 180);
         
         // Radius based on recency (closer to center = more recent)
-        // For visual, just distribute them based on volume if available, or just index
-        const radius = maxRadius * (0.2 + (i % 8) * 0.1);
+        const targetRadius = maxRadius * (0.2 + (i % 8) * 0.1);
 
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius;
+        const tx = centerX + Math.cos(angle) * targetRadius;
+        const ty = centerY + Math.sin(angle) * targetRadius;
+        
+        let p = particles.get(host.ip);
+        if (!p) {
+          p = { x: tx, y: ty, spawn: nowTime };
+          particles.set(host.ip, p);
+        }
+        
+        // Smoothly interpolate position
+        p.x += (tx - p.x) * 0.1;
+        p.y += (ty - p.y) * 0.1;
 
         const isAlerted = currentAlertIps.has(host.ip);
+        const age = nowTime - p.spawn;
+        const opacity = Math.min(1.0, age / 150);
 
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        
         // Dot
         ctx.beginPath();
-        ctx.arc(x, y, isAlerted ? 4 : 2, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, isAlerted ? 4 : 2, 0, Math.PI * 2);
         ctx.fillStyle = isAlerted ? '#C4432B' : '#3E8E88'; // red or cyan
         ctx.fill();
 
         // Optional fading trail or ping
         if (isAlerted) {
           ctx.beginPath();
-          ctx.arc(x, y, 8, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(196, 67, 43, 0.5)';
+          ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+          ctx.strokeStyle = `rgba(196, 67, 43, ${0.5 * opacity})`;
           ctx.lineWidth = 1;
           ctx.stroke();
         }
+        ctx.restore();
       });
 
       animationFrameId = requestAnimationFrame(draw);

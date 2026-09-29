@@ -147,8 +147,8 @@ function App() {
   if (!isStarted) {
     return (
       <div className="min-h-screen bg-bg-base text-text-paper flex items-center justify-center p-4">
-        <div className="w-full max-w-lg bg-bg-panel border border-grid-line p-8">
-          <h1 className="font-display text-4xl uppercase tracking-wider text-text-paper mb-6 leading-none border-b border-grid-line pb-4">
+        <div className="w-full max-w-lg bg-bg-panel border border-grid-line transition-colors duration-200 hover:border-[#3A3D37] p-8">
+          <h1 className="font-display text-4xl uppercase tracking-wider text-text-paper mb-6 leading-none border-b border-grid-line transition-colors duration-200 pb-4">
             Listening&middot;Post
           </h1>
           <form onSubmit={handleStart} className="flex flex-col gap-6">
@@ -171,7 +171,7 @@ function App() {
             <button 
               type="submit" 
               disabled={isUploading}
-              className={`mt-4 bg-accent-amber text-[#12130F] font-mono font-semibold uppercase tracking-widest py-3 transition-opacity ${isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-opacity-90'}`}
+              className={`mt-4 border border-transparent text-[#12130F] font-mono font-semibold uppercase tracking-widest py-3 transition-all duration-300 ${isUploading ? 'bg-accent-amber/20 text-accent-amber border-accent-amber animate-alert-pulse cursor-not-allowed' : 'bg-accent-amber hover:bg-[#E3AA5C] active:bg-[#B87D25]'}`}
             >
               {isUploading ? 'PROCESSING...' : 'INITIALIZE PIPELINE'}
             </button>
@@ -195,11 +195,11 @@ function App() {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-grid-line">THROUGHPUT:</span> 
-            <span>{state.metrics ? state.metrics.packets_per_second.toLocaleString() : '0'} pkt/s</span>
+            <span className="font-mono text-right">{state.metrics ? state.metrics.packets_per_second.toLocaleString() : '0'} pkt/s</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-grid-line">UPTIME:</span> 
-            <span>{formatUptime(state.uptime)}</span>
+            <span className="font-mono text-right">{formatUptime(state.uptime)}</span>
           </div>
         </div>
       </header>
@@ -214,10 +214,10 @@ function App() {
         
         <div className="flex-1 flex flex-col gap-6 min-w-0">
           {/* WATERFALL (Top Left) */}
-          <section className="flex-1 border border-grid-line bg-bg-panel flex flex-col overflow-hidden">
-            <div className="border-b border-grid-line px-4 py-2 font-mono text-xs uppercase text-accent-cyan tracking-widest flex justify-between">
+          <section className="flex-1 border border-grid-line transition-colors duration-200 hover:border-[#3A3D37] bg-bg-panel flex flex-col overflow-hidden">
+            <div className="border-b border-grid-line px-4 py-2 font-mono text-[10px] uppercase text-accent-cyan tracking-widest flex justify-between tracking-[0.1em]">
               <span>Traffic Waterfall &mdash; last 10s windows</span>
-              <span className="text-grid-line">SLIDE 2s</span>
+              <span className="text-grid-line text-right">SLIDE 2s</span>
             </div>
             <div className="flex-1 relative overflow-hidden">
               <Waterfall currentMetrics={state.metrics} />
@@ -225,10 +225,10 @@ function App() {
           </section>
 
           {/* BEARING BOARD (Bottom Left) */}
-          <section className="h-1/3 min-h-[250px] border border-grid-line bg-bg-panel flex flex-col shrink-0">
-             <div className="border-b border-grid-line px-4 py-2 font-mono text-xs uppercase text-accent-cyan tracking-widest flex justify-between">
+          <section className="h-1/3 min-h-[250px] border border-grid-line transition-colors duration-200 hover:border-[#3A3D37] bg-bg-panel flex flex-col shrink-0">
+             <div className="border-b border-grid-line px-4 py-2 font-mono text-[10px] uppercase text-accent-cyan tracking-widest flex justify-between tracking-[0.1em]">
               <span>Bearing Board &mdash; communication graph</span>
-              <span className="text-grid-line">{state.hosts.length} HOSTS</span>
+              <span className="text-grid-line text-right">{state.hosts.length} HOSTS</span>
             </div>
             <div className="flex-1 relative">
                <BearingBoard hosts={state.hosts} alerts={state.alerts} />
@@ -237,10 +237,10 @@ function App() {
         </div>
 
         {/* CONTACT LOG (Right Rail) */}
-        <section className={`w-full lg:w-96 border bg-bg-panel flex flex-col shrink-0 ${uploadError ? 'border-accent-red' : 'border-grid-line'}`}>
-          <div className={`border-b px-4 py-2 font-mono text-xs uppercase tracking-widest flex justify-between shrink-0 ${uploadError ? 'border-accent-red text-accent-red' : 'border-grid-line text-accent-cyan'}`}>
+        <section className={`w-full lg:w-96 border transition-colors duration-200 bg-bg-panel flex flex-col shrink-0 ${uploadError ? 'border-accent-red hover:border-accent-red/80' : 'border-grid-line hover:border-[#3A3D37]'}`}>
+          <div className={`border-b px-4 py-2 font-mono text-[10px] uppercase tracking-[0.1em] flex justify-between shrink-0 ${uploadError ? 'border-accent-red text-accent-red' : 'border-grid-line text-accent-cyan'}`}>
             <span>Contact Log</span>
-            <span className="text-grid-line">{state.alerts.length} LOGGED</span>
+            <span className="text-grid-line text-right">{state.alerts.length} LOGGED</span>
           </div>
           <div className="flex-1 overflow-y-auto min-h-0">
             <ContactLog alerts={state.alerts} uploadError={uploadError} />

@@ -21,3 +21,13 @@
     padding: 0;
   }
 }
+
+@layer utilities {
+  @keyframes alertPulse {
+    0% { background-color: rgba(196, 67, 43, 0.15); border-left-color: #C4432B; }
+    100% { background-color: transparent; border-left-color: #C4432B; }
+  }
+  .animate-alert-pulse {
+    animation: alertPulse 400ms ease-out forwards;
+  }
+}

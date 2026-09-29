@@ -67,10 +67,10 @@ export const RoadmapSidebar: React.FC = () => {
         <div className="flex flex-col overflow-hidden flex-1 min-h-0">
           {/* Header */}
           <div className="px-3 py-2 border-b border-grid-line shrink-0">
-            <span className="font-mono text-[9px] uppercase tracking-widest text-grid-line block leading-tight">
+            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-grid-line block leading-tight">
               ROADMAP
             </span>
-            <span className="font-mono text-[9px] uppercase tracking-widest text-accent-red/60 block leading-tight">
+            <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-accent-red/60 block leading-tight">
               NOT YET OPERATIONAL
             </span>
           </div>

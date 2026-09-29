@@ -67,9 +67,12 @@ export const WatchStations: React.FC<WatchStationsProps> = ({ alerts }) => {
         const rotation = -45 + (level * 90);
 
         return (
-          <div key={det.id} className="bg-bg-panel border border-grid-line p-3 flex flex-col justify-between relative overflow-hidden">
+          <div 
+            key={det.id} 
+            className={`border transition-all duration-300 p-3 flex flex-col justify-between relative overflow-hidden ${isActive ? 'bg-accent-red/5 border-accent-red/30' : 'bg-bg-panel border-grid-line hover:border-[#3A3D37]'}`}
+          >
             <div className="flex justify-between items-start mb-4 relative z-10">
-              <span className="font-mono text-[10px] uppercase text-text-paper tracking-wider leading-tight max-w-[70%]">
+              <span className="font-mono text-[10px] uppercase text-text-paper tracking-[0.1em] leading-tight max-w-[70%]">
                 {det.name}
               </span>
               <span className={`font-mono text-[9px] px-1 rounded-sm ${det.isML ? 'bg-accent-cyan/20 text-accent-cyan' : 'bg-[#2B2E29] text-grid-line'}`}>
@@ -102,8 +105,8 @@ export const WatchStations: React.FC<WatchStationsProps> = ({ alerts }) => {
               />
             </div>
             
-            <div className="text-center font-mono text-xs mt-2 relative z-10">
-              <span className={isActive ? 'text-accent-red' : 'text-accent-cyan'}>
+            <div className="text-center font-mono text-xs mt-2 relative z-10 font-medium">
+              <span className={isActive ? 'text-accent-red' : 'text-accent-cyan opacity-50'}>
                 {isActive ? `${(level * 100).toFixed(0)}%` : 'QUIET'}
               </span>
             </div>
