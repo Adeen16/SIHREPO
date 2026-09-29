@@ -23,7 +23,9 @@ class PCAPIngestor:
         try:
             with PcapReader(self.file_path) as pcap_reader:
                 for pkt in pcap_reader:
-                    yield self._parse_packet(pkt)
+                    parsed = self._parse_packet(pkt)
+                    if parsed is not None:
+                        yield parsed
         except Exception as e:
             raise ValueError(f"Failed to read PCAP file: {e}")
 
@@ -39,11 +41,31 @@ class PCAPIngestor:
 
         # IP Layer extraction
         if IP in pkt:
-            event.src_ip = pkt[IP].src
-            event.dst_ip = pkt[IP].dst
+            src = pkt[IP].src
+            dst = pkt[IP].dst
+            # Filter IPv4 multicast (224.0.0.0/4) and link-local (169.254.0.0/16)
+            if src.startswith("169.254.") or dst.startswith("169.254."):
+                return None
+            if src.startswith("224.") or dst.startswith("224.") or src.startswith("239.") or dst.startswith("239.") or dst == "255.255.255.255":
+                return None
+            
+            event.src_ip = src
+            event.dst_ip = dst
         elif IPv6 in pkt:
-            event.src_ip = pkt[IPv6].src
-            event.dst_ip = pkt[IPv6].dst
+            src = pkt[IPv6].src.lower()
+            dst = pkt[IPv6].dst.lower()
+            # Filter IPv6 multicast (ff00::/8) and link-local (fe80::/10)
+            if src.startswith("fe8") or src.startswith("fe9") or src.startswith("fea") or src.startswith("feb") or \
+               dst.startswith("fe8") or dst.startswith("fe9") or dst.startswith("fea") or dst.startswith("feb"):
+                return None
+            if src.startswith("ff") or dst.startswith("ff"):
+                return None
+
+            event.src_ip = src
+            event.dst_ip = dst
+        else:
+            # Not IP or IPv6
+            return None
 
         # Transport Layer extraction
         if TCP in pkt:

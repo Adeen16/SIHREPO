@@ -38,11 +38,21 @@ async def lifespan(app: FastAPI):
 
     logger.info("Shutting down Phase 10 Detection API...")
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(
     title="SIH 145 - Detection API Prototype",
     description="Real-time Phase 10 inference API for unidirectional network traffic.",
     version="1.0.0",
     lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(router)

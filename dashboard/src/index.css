@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-base: #12130F;
+  --color-bg-panel: #1B1D17;
+  --color-accent-amber: #D99A3D;
+  --color-accent-cyan: #3E8E88;
+  --color-accent-red: #C4432B;
+  --color-text-paper: #C9C2B4;
+  --color-grid-line: #2B2E29;
+
+  --font-sans: "IBM Plex Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --font-display: "Oswald", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-base text-text-paper font-sans antialiased;
+    margin: 0;
+    padding: 0;
+  }
+}

@@ -43,9 +43,10 @@ class SlidingWindowManager:
         if not packet or packet.timestamp is None:
             return []
 
-        # Advance current time tracker, enforcing monotonic timestamps (Option A)
         if self.latest_timestamp is not None and packet.timestamp < self.latest_timestamp:
-            raise ValueError(f"Out-of-order packet timestamp: {packet.timestamp} < {self.latest_timestamp}")
+            # If it's too old (outside current window), just drop it
+            if packet.timestamp < self.latest_timestamp - self.window_seconds:
+                return []
 
         self._buffer.append(packet)
 

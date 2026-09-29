@@ -38,6 +38,13 @@ class DetectionOrchestrator:
             ExfiltrationDetector()
         ]
         self.fusion = FusionEngine()
+        self._window_seconds = window_seconds
+        self._slide_seconds = slide_seconds
+
+    def reset(self):
+        """Resets the sliding window and feature extractors for a new traffic stream."""
+        self.window_manager = SlidingWindowManager(window_seconds=self._window_seconds, slide_seconds=self._slide_seconds)
+        self.feature_extractor = FeatureExtractor()
 
     def process_packet(self, packet: PacketEvent) -> List[DetectionResult]:
         """
@@ -81,6 +88,8 @@ class DetectionOrchestrator:
         for detector in self.detectors:
             try:
                 res = detector.evaluate(snapshot, flow_state, phase6_features)
+                if res.detector_name is None:
+                    res.detector_name = detector.name
                 raw_results.append(res)
             except Exception as e:
                 logger.error(f"Detector {detector.name} failed: {e}")
