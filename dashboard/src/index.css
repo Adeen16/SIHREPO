@@ -1,33 +1,102 @@
 @import "tailwindcss";
 
-@theme {
-  --color-bg-base: #12130F;
-  --color-bg-panel: #1B1D17;
-  --color-accent-amber: #D99A3D;
-  --color-accent-cyan: #3E8E88;
-  --color-accent-red: #C4432B;
-  --color-text-paper: #C9C2B4;
-  --color-grid-line: #2B2E29;
+/* ===========================================
+   VIGIL — Design System
+   v2.0 | NTRO SIH-145
+   =========================================== */
 
-  --font-sans: "IBM Plex Sans", sans-serif;
-  --font-mono: "IBM Plex Mono", monospace;
-  --font-display: "Oswald", sans-serif;
+/* Google Fonts: Sora + JetBrains Mono */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;600&family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+@theme {
+  /* --- Core Palette --- */
+  --color-bg:           #000000;
+  --color-text:         #ffffff;
+  --color-dim:          rgba(255,255,255,0.62);
+  --color-dimmer:       rgba(255,255,255,0.42);
+  --color-line:         rgba(255,255,255,0.14);
+  --color-line-strong:  rgba(255,255,255,0.26);
+  --color-fill-ghost:   rgba(255,255,255,0.05);
+  --color-fill-solid:   rgba(255,255,255,0.10);
+  --color-red:          #D14B32;
+
+  /* --- Typography --- */
+  --font-sora: 'Sora', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* --- Keep legacy aliases for components still using old tokens during transition --- */
+  --color-bg-base:     #000000;
+  --color-bg-panel:    #000000;
+  --color-text-paper:  #ffffff;
+  --color-grid-line:   rgba(255,255,255,0.14);
+  --color-accent-red:  #D14B32;
+  --color-accent-amber: #D14B32;
+  --color-accent-cyan: rgba(255,255,255,0.62);
 }
 
 @layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    border-radius: 0 !important; /* NO border-radius anywhere — design rule */
+  }
+
   body {
-    @apply bg-bg-base text-text-paper font-sans antialiased;
+    background: #000000;
+    color: #ffffff;
+    font-family: 'Sora', sans-serif;
+    font-weight: 300;
     margin: 0;
     padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Instrument voice — applied to all data values */
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.14);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.26);
   }
 }
 
 @layer utilities {
-  @keyframes alertPulse {
-    0% { background-color: rgba(196, 67, 43, 0.15); border-left-color: #C4432B; }
-    100% { background-color: transparent; border-left-color: #C4432B; }
+  /* === Threat alert pulse animation === */
+  @keyframes threatPulse {
+    0%   { background-color: rgba(209, 75, 50, 0.12); }
+    100% { background-color: transparent; }
   }
+  .animate-threat-pulse {
+    animation: threatPulse 600ms cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+
+  /* Legacy alias — keep to not break old components */
   .animate-alert-pulse {
-    animation: alertPulse 400ms ease-out forwards;
+    animation: threatPulse 600ms cubic-bezier(0.16,1,0.3,1) forwards;
   }
+
+  /* === Hairline border utilities === */
+  .border-line         { border-color: rgba(255,255,255,0.14); }
+  .border-line-strong  { border-color: rgba(255,255,255,0.26); }
+
+  /* === Typography utilities === */
+  .font-sora { font-family: 'Sora', sans-serif; }
+  .font-jb   { font-family: 'JetBrains Mono', monospace; }
+
+  /* === Mono tracking variants === */
+  .tracking-instrument  { letter-spacing: 0.14em; }
+  .tracking-instrument-wide { letter-spacing: 0.22em; }
 }

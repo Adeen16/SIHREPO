@@ -30,3 +30,21 @@ export interface FlowHost {
   last_seen: number;
   volume: number;
 }
+
+/** Polled from GET /status — not in WebSocket payload */
+export interface SystemStatus {
+  status: string;
+  model_loaded: boolean;
+  packets_processed: number;
+  windows_completed: number;
+  detections_generated: number;
+  processing_errors: number;
+  is_processing: boolean;
+}
+
+/** Polled from GET /model */
+export interface ModelInfo {
+  model_name: string;
+  features_expected: number;
+  features_list: string[];
+}

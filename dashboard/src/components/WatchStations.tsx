@@ -5,36 +5,41 @@ interface WatchStationsProps {
   alerts: Alert[];
 }
 
-// Map internal classes to display names and type
+/**
+ * VIGIL v2 — Watch Stations
+ * Design decision: Converted from dial/needle gauges to flat horizontal bar meters.
+ * Rationale: Flat bar meters are consistent with the sharp-rectangle, no-border-radius
+ * design system. The gauge semicircle required bezier SVG arcs which introduced curved
+ * elements that conflict with the design rules. Bar meters are also more legible
+ * at the small height of the bottom strip.
+ */
+
 const DETECTORS = [
-  { id: 'DDoS', name: 'Traffic Flood', isML: true },
-  { id: 'C2_BEACONING', name: 'Beacon Pattern', isML: false },
-  { id: 'DNS_DGA_TUNNEL', name: 'DNS Anomaly', isML: false },
-  { id: 'ENCRYPTED_MALWARE', name: 'Encrypted Session Anomaly', isML: false },
-  { id: 'RECONNAISSANCE', name: 'Network Scan', isML: false },
-  { id: 'DATA_EXFILTRATION', name: 'Data Departure', isML: false },
-];
+  { id: 'DDoS',            name: 'Traffic Flood',            isML: true  },
+  { id: 'C2_BEACONING',    name: 'Beacon Pattern',           isML: false },
+  { id: 'DNS_DGA_TUNNEL',  name: 'DNS Anomaly',              isML: false },
+  { id: 'ENCRYPTED_MALWARE', name: 'Encrypted Sess.',        isML: false },
+  { id: 'RECONNAISSANCE',  name: 'Network Scan',             isML: false },
+  { id: 'DATA_EXFILTRATION', name: 'Data Departure',         isML: false },
+] as const;
 
 export const WatchStations: React.FC<WatchStationsProps> = ({ alerts }) => {
-  // Use React state and interval to trigger re-renders for the decay animation
   const [now, setNow] = React.useState(Date.now() / 1000);
 
   React.useEffect(() => {
-    const timer = setInterval(() => {
-      setNow(Date.now() / 1000);
-    }, 1000);
+    const timer = setInterval(() => setNow(Date.now() / 1000), 1000);
     return () => clearInterval(timer);
   }, []);
-  
-  const getDetectorActivity = (threatId: string) => {
-    // Find alerts for this class in the last 15 seconds of real wall clock time
+
+  const getLevel = (threatId: string): number => {
     const recentAlerts = alerts.filter(a => {
       const timeRef = a.receivedAt || a.timestamp;
-      return a.threat_class.toUpperCase().includes(threatId.toUpperCase()) && 
+      return a.threat_class.toUpperCase().includes(threatId.toUpperCase()) &&
              (now - timeRef) < 15;
     });
-    
-    // Scale 0 to 1 based on severity
+
+    if (recentAlerts.length === 0) return 0;
+
     let maxSeverityLevel = 0;
     for (const a of recentAlerts) {
       let sl = 0;
@@ -42,74 +47,111 @@ export const WatchStations: React.FC<WatchStationsProps> = ({ alerts }) => {
       else if (a.severity === 'HIGH') sl = 0.8;
       else if (a.severity === 'MEDIUM') sl = 0.5;
       else if (a.severity === 'LOW') sl = 0.2;
-      else sl = 0.1; // unknown
+      else sl = 0.1;
       if (sl > maxSeverityLevel) maxSeverityLevel = sl;
     }
-    
-    // Add small decay based on time since last alert for smooth animation down
-    if (recentAlerts.length > 0) {
-       const latest = Math.max(...recentAlerts.map(a => a.receivedAt || a.timestamp));
-       const age = now - latest;
-       // Decay linearly from maxSeverityLevel to 0 over 15 seconds
-       const decay = Math.max(0, 1 - (age / 15));
-       return maxSeverityLevel * decay;
-    }
-    return 0;
+
+    const latest = Math.max(...recentAlerts.map(a => a.receivedAt || a.timestamp));
+    const age = now - latest;
+    const decay = Math.max(0, 1 - age / 15);
+    return maxSeverityLevel * decay;
   };
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-      {DETECTORS.map(det => {
-        const level = getDetectorActivity(det.id);
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(6, 1fr)',
+        borderTop: '1px solid rgba(255,255,255,0.14)',
+      }}
+    >
+      {DETECTORS.map((det, i) => {
+        const level = getLevel(det.id);
         const isActive = level > 0;
-        
-        // Needle rotation: -45deg (min) to +45deg (max)
-        const rotation = -45 + (level * 90);
+        const pct = Math.round(level * 100);
 
         return (
-          <div 
-            key={det.id} 
-            className={`border transition-all duration-300 p-3 flex flex-col justify-between relative overflow-hidden ${isActive ? 'bg-accent-red/5 border-accent-red/30' : 'bg-bg-panel border-grid-line hover:border-[#3A3D37]'}`}
+          <div
+            key={det.id}
+            style={{
+              borderRight: i < DETECTORS.length - 1 ? '1px solid rgba(255,255,255,0.14)' : 'none',
+              padding: '10px 12px',
+              background: isActive ? 'rgba(209,75,50,0.04)' : 'transparent',
+              transition: 'background 0.25s',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+            }}
           >
-            <div className="flex justify-between items-start mb-4 relative z-10">
-              <span className="font-mono text-[10px] uppercase text-text-paper tracking-[0.1em] leading-tight max-w-[70%]">
+            {/* Label row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span
+                style={{
+                  fontFamily: 'Sora, sans-serif',
+                  fontSize: '10px',
+                  fontWeight: 300,
+                  color: isActive ? '#fff' : 'rgba(255,255,255,0.42)',
+                  transition: 'color 0.25s',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  maxWidth: '80%',
+                }}
+              >
                 {det.name}
               </span>
-              <span className={`font-mono text-[9px] px-1 rounded-sm ${det.isML ? 'bg-accent-cyan/20 text-accent-cyan' : 'bg-[#2B2E29] text-grid-line'}`}>
+              <span
+                style={{
+                  fontFamily: 'JetBrains Mono, monospace',
+                  fontSize: '7px',
+                  letterSpacing: '0.14em',
+                  textTransform: 'uppercase',
+                  border: '1px solid rgba(255,255,255,0.14)',
+                  padding: '1px 3px',
+                  color: det.isML ? 'rgba(255,255,255,0.62)' : 'rgba(255,255,255,0.28)',
+                  flexShrink: 0,
+                }}
+              >
                 {det.isML ? 'ML' : 'BEH'}
               </span>
             </div>
-            
-            <div className="relative h-12 flex items-end justify-center mb-1">
-              {/* Gauge Arc */}
-              <svg className="absolute w-20 h-10 bottom-0" viewBox="0 0 100 50">
-                {/* Background Track */}
-                <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#2B2E29" strokeWidth="4" strokeLinecap="square" />
-                {/* Active Track */}
-                {isActive && (
-                  <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#C4432B" strokeWidth="4" strokeLinecap="square" 
-                    strokeDasharray="125" 
-                    strokeDashoffset={125 - (125 * level)} 
-                    style={{ transition: 'stroke-dashoffset 0.5s ease' }} 
-                  />
-                )}
-              </svg>
-              
-              {/* Needle Pivot */}
-              <div className="absolute w-3 h-3 bg-grid-line rounded-full bottom-[-6px]" />
-              
-              {/* Needle */}
-              <div 
-                className="absolute bottom-0 w-1 h-12 bg-accent-amber origin-bottom transition-transform duration-300 ease-out"
-                style={{ transform: `rotate(${rotation}deg)` }}
+
+            {/* Flat bar meter */}
+            <div
+              style={{
+                height: '3px',
+                background: 'rgba(255,255,255,0.08)',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  height: '100%',
+                  width: `${pct}%`,
+                  background: '#D14B32',
+                  transition: 'width 0.5s cubic-bezier(0.16,1,0.3,1)',
+                }}
               />
             </div>
-            
-            <div className="text-center font-mono text-xs mt-2 relative z-10 font-medium">
-              <span className={isActive ? 'text-accent-red' : 'text-accent-cyan opacity-50'}>
-                {isActive ? `${(level * 100).toFixed(0)}%` : 'QUIET'}
-              </span>
+
+            {/* Status readout */}
+            <div
+              style={{
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '10px',
+                fontWeight: 400,
+                letterSpacing: '0.1em',
+                color: isActive ? '#D14B32' : 'rgba(255,255,255,0.28)',
+                transition: 'color 0.25s',
+              }}
+            >
+              {isActive ? `${pct}%` : 'QUIET'}
             </div>
+
           </div>
         );
       })}
