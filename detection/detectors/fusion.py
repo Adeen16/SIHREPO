@@ -51,20 +51,40 @@ class FusionEngine:
         # Select the highest severity valid detection
         return self._select_highest_priority(valid_detections)
 
+    # Priority rank for threat classes to resolve genuine ties.
+    # Higher value = higher priority in a tie-break.
+    # DDoS/Exfiltration are most severe (immediate impact), Recon next, then C2, then ambiguous anomalies.
+    THREAT_CLASS_PRIORITY = {
+        "DDoS": 100,
+        "DATA_EXFILTRATION": 90,
+        "RECONNAISSANCE": 80,
+        "C2_BEACONING": 70,
+        "DNS_DGA_TUNNEL": 60,
+        "ENCRYPTED_MALWARE": 50
+    }
+
     def _select_highest_priority(self, detections: List[DetectionResult]) -> DetectionResult:
         highest_det = detections[0]
         highest_rank = self.SEVERITY_RANK.get(highest_det.severity, 0)
-
+        
         for det in detections[1:]:
             rank = self.SEVERITY_RANK.get(det.severity, 0)
-            # Break ties with score/confidence if possible
+            
             if rank > highest_rank:
                 highest_det = det
                 highest_rank = rank
             elif rank == highest_rank:
                 score1 = highest_det.confidence or highest_det.score or 0.0
                 score2 = det.confidence or det.score or 0.0
-                if score2 > score1:
+                
+                # Check for a genuine tie within a small epsilon (0.02)
+                if abs(score2 - score1) <= 0.02:
+                    # Break tie using explicit documented threat class priority
+                    prio1 = self.THREAT_CLASS_PRIORITY.get(highest_det.threat_type, 0)
+                    prio2 = self.THREAT_CLASS_PRIORITY.get(det.threat_type, 0)
+                    if prio2 > prio1:
+                        highest_det = det
+                elif score2 > score1:
                     highest_det = det
 
         return highest_det

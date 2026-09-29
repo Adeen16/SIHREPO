@@ -7,9 +7,10 @@ class C2BeaconingDetector(BaseDetector):
     Detects Botnet C2 Beaconing using inter-arrival time (IAT) regularity,
     accumulated across multiple observation windows to avoid missing slow beacons.
     """
-    def __init__(self, min_packets: int = 4, max_cv: float = 1.5, min_duration: float = 2.0, max_history_age: float = 300.0):
+    def __init__(self, min_packets: int = 4, max_cv: float = 0.1, min_duration: float = 2.0, max_history_age: float = 300.0):
         self.min_packets = min_packets
         # Coefficient of Variation (stddev / mean). A low CV means highly regular timing.
+        # 0.1 represents 10% standard deviation relative to mean, which is highly periodic.
         self.max_cv = max_cv
         self.min_duration = min_duration
         self.max_history_age = max_history_age
@@ -79,50 +80,74 @@ class C2BeaconingDetector(BaseDetector):
             stddev = math.sqrt(variance)
             cv = stddev / flow_state._iat_mean
 
-        windows_seen = len(history["active_windows"])
+        # 1. Exclusion of Infrastructure Traffic
+        INFRA_PORTS = {53, 67, 68, 123, 137, 138, 161, 162, 389, 636, 5353}
+        INFRA_IPS = {"8.8.8.8", "8.8.4.4", "1.1.1.1"}
+        if flow_state.dst_port in INFRA_PORTS or flow_state.src_port in INFRA_PORTS:
+            return DetectionResult(flow_id=flow_id, timestamp=current_time, status="NOT_DETECTED", detector_name=self.name)
+        if history["dst_ip"] in INFRA_IPS or flow_state.src_ip in INFRA_IPS:
+            return DetectionResult(flow_id=flow_id, timestamp=current_time, status="NOT_DETECTED", detector_name=self.name)
 
-        # C2 beacons are typically small control packets sent to well-known ports (80, 443, 53)
+        windows_seen = len(history["active_windows"])
+        
+        # Calculate timespan
+        observation_span = 0.0
+        if windows_seen > 0:
+            observation_span = history["active_windows"][-1] - history["active_windows"][0]
+
+        # C2 beacons are typically small control packets
         avg_packet_size = flow_state.byte_count / flow_state.packet_count if flow_state.packet_count > 0 else 0
         is_small_packets = avg_packet_size < 300
 
-        # P2P DHT (UDP) often mimics beacons due to regular pings to high ports.
-        is_service_port = flow_state.dst_port <= 10000
+        # Must meet hard minimums
+        MIN_WINDOWS = 10
+        MIN_SPAN = 60.0
+        
+        if cv is None or cv > self.max_cv or windows_seen < MIN_WINDOWS or observation_span < MIN_SPAN or not is_small_packets or flow_state.packet_count < self.min_packets:
+            return DetectionResult(flow_id=flow_id, timestamp=current_time, status="NOT_DETECTED", detector_name=self.name)
 
-        signals = 0
-        reasons = []
+        # 2. Continuous Scoring
+        # a) Regularity score: 1.0 if CV is 0, approaches 0 as CV approaches max_cv
+        regularity_score = 1.0 - (cv / self.max_cv)
+        
+        # b) Sustained span score: scales from 0.0 to 1.0 as it exceeds minimums
+        # Scale up to 30 windows for max score
+        sustained_score = min(1.0, (windows_seen - MIN_WINDOWS) / 20.0)
+        
+        # c) Volume score: scales based on packets
+        volume_score = min(1.0, (flow_state.packet_count - self.min_packets) / 50.0)
 
-        # 1. High regularity in the current window
-        if cv is not None and cv <= self.max_cv:
-            signals += 1
-            reasons.append(f"Highly regular inter-arrival timing (CV={cv:.2f})")
+        # Weighted combination
+        confidence = (0.5 * regularity_score) + (0.35 * sustained_score) + (0.15 * volume_score)
 
-        # 2. Repeated communication across many windows (Sustained periodic communication)
-        if windows_seen >= 5:
-            signals += 1
-            reasons.append(f"Sustained communication across {windows_seen} windows")
+        # Require a minimum confidence floor
+        if confidence < 0.75:
+            return DetectionResult(flow_id=flow_id, timestamp=current_time, status="NOT_DETECTED", detector_name=self.name)
 
-        # 3. Sufficient packets
-        if flow_state.packet_count >= self.min_packets:
-            signals += 1
-            reasons.append(f"Sufficient packet volume ({flow_state.packet_count})")
+        reasons = [
+            f"Highly regular timing (CV={cv:.3f})",
+            f"Sustained over {windows_seen} windows ({observation_span:.1f}s)",
+            f"Non-infrastructure port ({flow_state.dst_port})"
+        ]
 
-        if signals >= 2 and windows_seen >= 3 and is_small_packets and is_service_port:
-            return DetectionResult(
-                flow_id=flow_id,
-                timestamp=current_time,
-                status="DETECTED",
-                threat_type="C2_BEACONING",
-                severity="HIGH",
-                confidence=min(1.0, signals / 3.0),
-                detector_name=self.name,
-                evidence={
-                    "periodicity_cv": cv,
-                    "windows_seen": windows_seen,
-                    "packet_count": flow_state.packet_count,
-                    "dst_ip": history["dst_ip"],
-                    "reason": " and ".join(reasons)
-                }
-            )
+        return DetectionResult(
+            flow_id=flow_id,
+            timestamp=current_time,
+            status="DETECTED",
+            threat_type="C2_BEACONING",
+            severity="HIGH",
+            confidence=confidence,
+            detector_name=self.name,
+            evidence={
+                "periodicity_cv": cv,
+                "windows_seen": windows_seen,
+                "observation_span": observation_span,
+                "packet_count": flow_state.packet_count,
+                "dst_ip": history["dst_ip"],
+                "dst_port": flow_state.dst_port,
+                "reason": " and ".join(reasons)
+            }
+        )
 
         return DetectionResult(
             flow_id=flow_id,

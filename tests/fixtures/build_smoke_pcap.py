@@ -75,6 +75,23 @@ for port_idx in range(60):
     p.time = ts
     packets.append(p)
 
+# ── 3. C2 Beaconing: 192.168.1.100 -> 10.0.0.5:8080 ────────────
+# Must have regularity, sustained over 10 windows, and observation span > 60s
+c2_base = recon_base + 5.0
+c2_packets = []
+# Need at least 10 windows and > 60s span. Send 1 packet every 0.5 seconds for 200 packets (100s span).
+# This perfectly matches max_cv because it's exactly 0.5s apart (stddev=0, cv=0)
+# And since window=5s, there will be 10 packets per window, allowing IAT stddev calculation!
+for i in range(200):
+    ts = c2_base + i * 0.5
+    p = (
+        Ether() /
+        IP(src="192.168.1.100", dst="10.0.0.5") /
+        TCP(sport=45000, dport=8080, flags="PA")
+    )
+    p.time = ts
+    packets.append(p)
+
 # Sort all packets by timestamp before writing
 packets.sort(key=lambda p: float(p.time))
 
@@ -82,3 +99,4 @@ wrpcap(str(OUT), packets)
 print(f"Written {len(packets)} packets to {OUT}")
 print(f"  DDoS  segment: {n_src} sources x {pkt_per_src} pkt each = {n_src*pkt_per_src} pkt")
 print(f"  Recon segment: 1 source, 60 distinct dst ports")
+print(f"  C2    segment: 1 source, 20 packets spanning 100 seconds to non-infra port")
